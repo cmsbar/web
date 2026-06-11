@@ -219,7 +219,6 @@ function wrapSelection(cls) {
 
 /* ── image: change + reposition ───────────────────────────────────────────── */
 const heroImg = $("#hero-img");
-let reposState = null;
 
 heroImg.addEventListener("click", (e) => {
   if (state.mode !== "editing") return;
@@ -233,6 +232,7 @@ heroImg.addEventListener("click", (e) => {
 });
 
 function startReposition() {
+  if (heroImg.classList.contains("repositioning")) return; // already active
   const hint = $(".reposition-hint", heroImg);
   heroImg.classList.add("repositioning");
   hint.hidden = false;
