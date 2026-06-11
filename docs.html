@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMSBar — Documentation</title>
+    <meta name="description" content="Install CMSBar, configure it, wrap content with the primitives, theme it, and connect the Cloud control plane." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Geist+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="docs.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d0c0e'/%3E%3Crect x='7' y='21' width='18' height='4' rx='2' fill='%23f0497c'/%3E%3Crect x='7' y='8' width='12' height='3' rx='1.5' fill='%23efe9e2'/%3E%3Crect x='7' y='14' width='18' height='3' rx='1.5' fill='%23544e55'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body class="docs-body">
+    <div class="grain" aria-hidden="true"></div>
+
+    <nav class="nav">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span class="bar"></span></span>
+        CMSBar
+      </a>
+      <div class="nav-links">
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#features">Features</a>
+        <a href="demo.html">Demo</a>
+        <a href="index.html#pricing">Pricing</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="index.html">← Home</a>
+        <a class="btn btn-solid" href="#install">npx cmsbar init</a>
+      </div>
+    </nav>
+
+    <div class="docs-shell">
+      <!-- sidebar -->
+      <aside class="docs-side">
+        <nav class="docs-nav" id="docs-nav">
+          <p class="dn-group">Getting started</p>
+          <a href="#what">What CMSBar is</a>
+          <a href="#install">Install</a>
+          <a href="#wire">Wire the layout</a>
+          <a href="#env">Environment</a>
+          <p class="dn-group">Building</p>
+          <a href="#primitives">Primitives</a>
+          <a href="#config">cms.config.ts</a>
+          <a href="#theming">Theming</a>
+          <a href="#schema">Content &amp; schema</a>
+          <p class="dn-group">Operating</p>
+          <a href="#workflow">Editor workflow</a>
+          <a href="#backend">Storage backend</a>
+          <a href="#cloud">Cloud Studio</a>
+          <a href="#faq">Troubleshooting</a>
+        </nav>
+      </aside>
+
+      <!-- content -->
+      <main class="docs-main">
+        <header class="docs-hero">
+          <p class="kicker">Documentation</p>
+          <h1>Drop a Git-as-CMS into your codebase.</h1>
+          <p class="lede">
+            CMSBar copies into your Next.js repo (shadcn-style). Editors change
+            content on the live site; each save is a branch and a pull request.
+            No database, no hosted dashboard required, no lock-in.
+          </p>
+        </header>
+
+        <section id="what">
+          <h2>What CMSBar is</h2>
+          <p>
+            A small set of React components and API routes you install into a
+            Next.js App Router project. You wrap editable content with
+            primitives like <code>&lt;T path="…"/&gt;</code>; logged-in editors
+            click and edit them in place. On Save, all changes commit as one
+            commit on a <code>cms/*</code> branch and open a GitHub PR. Merging
+            redeploys with the new content baked into the build.
+          </p>
+          <div class="callout">
+            <b>One mental model:</b> one draft = one branch = one PR = one
+            version. Approval is a GitHub label. History is <code>git log</code>.
+          </div>
+        </section>
+
+        <section id="install">
+          <h2>Install</h2>
+          <p>In an existing Next.js (App Router) project:</p>
+          <pre><code><span class="c"># copies components/cmsbar, lib/cmsbar, app/api/cms, a config, a theme</span>
+npx cmsbar init --namespace <span class="s">mysite</span>
+npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
+          <p class="dim">
+            The CLI detects <code>src/</code> vs root layout, writes a
+            <code>cms.config.ts</code>, and appends the env keys it needs to
+            <code>.env.example</code>. Nothing depends on the CLI afterward —
+            the code is yours.
+          </p>
+        </section>
+
+        <section id="wire">
+          <h2>Wire the layout</h2>
+          <p>Wrap your root layout once so every page can resolve content:</p>
+          <pre><code><span class="c">// app/layout.tsx</span>
+<span class="k">import</span> { cookies } <span class="k">from</span> <span class="s">"next/headers"</span>;
+<span class="k">import</span> { getContent } <span class="k">from</span> <span class="s">"@/lib/content"</span>;
+<span class="k">import</span> { SESSION_COOKIE } <span class="k">from</span> <span class="s">"@/lib/cmsbar/keys"</span>;
+<span class="k">import</span> { verifySession } <span class="k">from</span> <span class="s">"@/lib/cmsbar/session"</span>;
+<span class="k">import</span> { ContentProvider } <span class="k">from</span> <span class="s">"@/components/cmsbar/ContentProvider"</span>;
+<span class="k">import</span> { CmsBar } <span class="k">from</span> <span class="s">"@/components/cmsbar/CmsBar"</span>;
+
+<span class="k">export default async function</span> <span class="f">RootLayout</span>({ children }) {
+  <span class="k">const</span> session = verifySession((<span class="k">await</span> cookies()).get(SESSION_COOKIE)?.value);
+  <span class="k">return</span> (
+    &lt;html&gt;&lt;body&gt;
+      &lt;ContentProvider
+        content={getContent()}
+        initialCms={{ authenticated: !!session, user: session?.user, draft: session?.draft }}
+      &gt;
+        {children}
+        &lt;CmsBar /&gt;
+      &lt;/ContentProvider&gt;
+    &lt;/body&gt;&lt;/html&gt;
+  );
+}</code></pre>
+          <p>Import the theme once in <code>app/globals.css</code>:</p>
+          <pre><code><span class="k">@import</span> <span class="s">"../../styles/cmsbar.css"</span>;</code></pre>
+        </section>
+
+        <section id="env">
+          <h2>Environment</h2>
+          <p>Fill these into <code>.env.local</code> (and your host's env panel):</p>
+          <pre><code>CMS_USER=admin
+<span class="c"># bcrypt hash — escape every $ as \$ (dotenv-expand mangles it otherwise)</span>
+CMS_PASSWORD_HASH=\$2b\$10\$...
+CMS_SESSION_SECRET=<span class="c"># 32+ hex chars</span>
+GITHUB_TOKEN=github_pat_...     <span class="c"># fine-grained: Contents + Pull requests (RW)</span>
+GITHUB_OWNER=me
+GITHUB_REPO=my-site
+GITHUB_BASE_BRANCH=main</code></pre>
+          <div class="callout warn">
+            <b>Gotcha:</b> bcrypt hashes contain <code>$</code>, which Next's
+            dotenv-expand treats as interpolation. Escape every <code>$</code>
+            as <code>\$</code>. Quotes don't help.
+          </div>
+        </section>
+
+        <section id="primitives">
+          <h2>Primitives</h2>
+          <p>Wrap content with these instead of hardcoding values. Each takes a dotted <code>path</code> into your content JSON.</p>
+          <table class="api">
+            <tr><th>Primitive</th><th>For</th></tr>
+            <tr><td><code>&lt;T path/&gt;</code></td><td>Inline text + a floating rich-text toolbar (bold/italic/underline, optional decor class, links).</td></tr>
+            <tr><td><code>&lt;RichText path/&gt;</code></td><td>Multi-paragraph rich text (block-level editor).</td></tr>
+            <tr><td><code>&lt;EditableImage path positionPath/&gt;</code></td><td>Image with a media browser (library + upload), plus drag-to-reposition stored as a focal point.</td></tr>
+            <tr><td><code>&lt;EditableMedia path/&gt;</code></td><td>Video / image / embeddable media (YouTube, Vimeo, Google Maps URL → embed).</td></tr>
+            <tr><td><code>&lt;EditableInfoList path/&gt;</code></td><td>Repeatable rows — icon + label + value — with add / remove / drag-reorder. (The “Informacije” block.)</td></tr>
+          </table>
+          <pre><code><span class="f">&lt;T</span> <span class="a">path</span>=<span class="s">"home.hero.headline"</span> <span class="a">as</span>=<span class="s">"h1"</span> <span class="a">className</span>=<span class="s">"text-5xl"</span> <span class="f">/&gt;</span>
+<span class="f">&lt;RichText</span> <span class="a">path</span>=<span class="s">"home.hero.subtitle"</span> <span class="a">as</span>=<span class="s">"p"</span> <span class="f">/&gt;</span>
+<span class="f">&lt;EditableImage</span> <span class="a">path</span>=<span class="s">"course.hero.image"</span> <span class="a">positionPath</span>=<span class="s">"course.hero.pos"</span> <span class="a">fill</span> <span class="a">alt</span>=<span class="s">""</span> <span class="f">/&gt;</span>
+<span class="f">&lt;EditableMedia</span> <span class="a">path</span>=<span class="s">"course.media"</span> <span class="f">/&gt;</span>
+<span class="f">&lt;EditableInfoList</span> <span class="a">path</span>=<span class="s">"course.info"</span> <span class="f">/&gt;</span></code></pre>
+          <p class="dim">When no editor is logged in, every primitive just renders the bundled value — they're additive, so you can make one section editable and leave the rest.</p>
+        </section>
+
+        <section id="config">
+          <h2>cms.config.ts</h2>
+          <p>One typed file owns everything project-specific. The CMSBar code reads this and nothing else.</p>
+          <pre><code><span class="k">import</span> { defineCmsConfig } <span class="k">from</span> <span class="s">"./lib/cmsbar/config"</span>;
+
+<span class="k">export const</span> cmsConfig = <span class="f">defineCmsConfig</span>({
+  <span class="a">namespace</span>: <span class="s">"mysite"</span>,        <span class="c">// cookie + storage key prefix</span>
+  <span class="a">siteName</span>: <span class="s">"My Site"</span>,
+  <span class="a">domain</span>: <span class="s">"example.com"</span>,
+  <span class="a">contentFile</span>: <span class="s">"content/site-content.json"</span>,
+  <span class="a">mediaFolders</span>: [<span class="s">"public/images"</span>, <span class="s">"public/media"</span>],
+  <span class="a">branchPrefix</span>: <span class="s">"cms/"</span>,
+  <span class="a">approvedLabel</span>: <span class="s">"cmsbar approved"</span>,
+  <span class="a">sharedPrefixes</span>: [<span class="s">"site."</span>, <span class="s">"nav."</span>, <span class="s">"footer."</span>],
+  <span class="a">pages</span>: [{ <span class="a">key</span>: <span class="s">"home"</span>, <span class="a">path</span>: <span class="s">"/"</span>, <span class="a">label</span>: <span class="s">"Home"</span> }],
+  <span class="a">richText</span>: { <span class="a">decorClass</span>: <span class="s">""</span> },   <span class="c">// optional decorative span class</span>
+});</code></pre>
+          <table class="api">
+            <tr><th>Key</th><th>What it controls</th></tr>
+            <tr><td><code>namespace</code></td><td>Cookie name + localStorage/IndexedDB keys, so two CMSBar sites never collide.</td></tr>
+            <tr><td><code>mediaFolders</code></td><td>Where uploads, deletes, and folder creation are allowed; first is the default.</td></tr>
+            <tr><td><code>sharedPrefixes</code></td><td>Paths that render on many pages — shown with the amber “shared” warning.</td></tr>
+            <tr><td><code>pages</code></td><td>Static pages: draft titles + the per-page SEO drawer.</td></tr>
+            <tr><td><code>approvedLabel</code></td><td>GitHub label that locks a draft PR read-only.</td></tr>
+          </table>
+        </section>
+
+        <section id="theming">
+          <h2>Theming</h2>
+          <p>Every brand-colored piece of editor chrome reads a CSS variable. Override them after the import to re-brand — no component edits.</p>
+          <pre><code><span class="c">/* app/globals.css, after the cmsbar import */</span>
+<span class="k">:root</span> {
+  <span class="a">--cmsbar-accent</span>: <span class="s">#db2777</span>;        <span class="c">/* buttons, page-local rings */</span>
+  <span class="a">--cmsbar-accent-strong</span>: <span class="s">#be185d</span>;
+  <span class="a">--cmsbar-shared</span>: <span class="s">#fbbf24</span>;        <span class="c">/* shared-element highlight */</span>
+  <span class="a">--cmsbar-info</span>: <span class="s">#2563eb</span>;          <span class="c">/* selected states in drawers */</span>
+}</code></pre>
+        </section>
+
+        <section id="schema">
+          <h2>Content &amp; schema</h2>
+          <p>
+            Content lives in the JSON file you set as <code>contentFile</code>.
+            The <code>SiteContent</code> type in <code>lib/content.ts</code> is
+            yours — infer it from the JSON, or write it explicitly for stricter
+            guarantees. Add a key to the JSON, reference it from a primitive's
+            <code>path</code>, done.
+          </p>
+          <div class="callout">
+            Keep the schema type and the JSON in the same commit. A merged CMS
+            PR redeploys with the new content compiled in.
+          </div>
+        </section>
+
+        <section id="workflow">
+          <h2>Editor workflow</h2>
+          <ul class="steps">
+            <li><b>New draft</b> — creates <code>cms/&lt;slug&gt;</code> and opens <code>[CMS draft] &lt;title&gt;</code>.</li>
+            <li><b>Edit</b> — click any outlined element; pink = page-local, amber = shared across pages.</li>
+            <li><b>Save</b> — one commit with all batched changes. Unsaved work survives reloads.</li>
+            <li><b>Versions</b> — every open <code>cms/*</code> PR; preview, edit, or fork any of them.</li>
+            <li><b>Approve</b> — a reviewer adds the approval label; the draft locks read-only.</li>
+            <li><b>Merge</b> — redeploys. The editor never touched Git.</li>
+          </ul>
+          <p><a class="inline-link" href="demo.html">Try all of this in the live demo →</a></p>
+        </section>
+
+        <section id="backend">
+          <h2>Storage backend</h2>
+          <p>
+            GitHub is the reference adapter (Git Data API, one commit per Save,
+            fine-scoped PAT, stateless container). The
+            <code>CmsBackend</code> interface in
+            <code>lib/cmsbar/backend/types.ts</code> documents the seam for a
+            future GitLab / file / database adapter — route handlers consume the
+            interface, the adapter fills it.
+          </p>
+        </section>
+
+        <section id="cloud">
+          <h2>Cloud Studio (optional)</h2>
+          <p>
+            Self-host everything for free. <b>Cloud Studio</b> is the hosted
+            control plane for agencies who'd rather not operate it: encrypted
+            PAT custody, client logins without GitHub accounts, an approval
+            dashboard across every connected site, preview deploys + media CDN,
+            and metered AI auto-wrap. The OSS core stays fully functional
+            without it.
+          </p>
+          <div class="callout">
+            Billed on projects × editor seats. The dashboard is the only part
+            of CMSBar behind a login — the docs and code are open.
+          </div>
+        </section>
+
+        <section id="faq">
+          <h2>Troubleshooting</h2>
+          <details open>
+            <summary>Login works but Save fails with a GitHub error</summary>
+            <p>Check the PAT scopes (Contents + Pull requests, read &amp; write) and that <code>GITHUB_BASE_BRANCH</code> points at the branch holding current content — a stale base makes saves diff against old content.</p>
+          </details>
+          <details>
+            <summary>My password hash isn't accepted</summary>
+            <p>Escape every <code>$</code> in <code>CMS_PASSWORD_HASH</code> as <code>\$</code>. dotenv-expand silently mangles unescaped <code>$</code>.</p>
+          </details>
+          <details>
+            <summary>Edits don't show after merging</summary>
+            <p>Content is compiled into the build. Confirm your host redeploys on merge (webhook) and that the merge targeted <code>GITHUB_BASE_BRANCH</code>.</p>
+          </details>
+          <details>
+            <summary>Which frameworks are supported?</summary>
+            <p>Next.js App Router today. The core is framework-neutral; a TanStack Start host adapter is the first planned addition. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
+          </details>
+        </section>
+
+        <footer class="docs-foot">
+          <a class="install-pill" data-copy="npx cmsbar init" href="#install">
+            <span class="dollar">$</span> npx cmsbar init <span class="copy-hint">copy</span>
+          </a>
+          <p class="dim">MIT licensed · the code ships into your repo · you own it.</p>
+        </footer>
+      </main>
+    </div>
+
+    <div class="toast mono" id="toast" role="status">copied to clipboard</div>
+    <script src="docs.js"></script>
+  </body>
+</html>

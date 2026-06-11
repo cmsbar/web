@@ -1,0 +1,142 @@
+/* ── CMSBar docs (extends styles.css tokens) ───────────────────────────────── */
+.docs-body { background: var(--bg); }
+
+.docs-shell {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  max-width: 1160px;
+  margin: 0 auto;
+  gap: 40px;
+  padding: 0 24px;
+}
+@media (max-width: 860px) {
+  .docs-shell { grid-template-columns: 1fr; }
+  .docs-side { display: none; }
+}
+
+/* sidebar */
+.docs-side { position: relative; }
+.docs-nav {
+  position: sticky;
+  top: 80px;
+  padding: 34px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.dn-group {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 18px 0 6px;
+}
+.dn-group:first-child { margin-top: 0; }
+.docs-nav a {
+  font-size: 13.5px;
+  color: var(--dim);
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border-left: 2px solid transparent;
+  transition: 0.14s;
+}
+.docs-nav a:hover { color: var(--ink); background: var(--panel); }
+.docs-nav a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(240, 73, 124, 0.06);
+}
+
+/* content */
+.docs-main { padding: 34px 0 80px; max-width: 760px; min-width: 0; }
+.docs-hero { padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.docs-hero h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+  margin: 14px 0 0;
+}
+.docs-hero .lede { color: var(--dim); max-width: 60ch; margin-top: 18px; }
+
+.docs-main section { padding: 30px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 74px; }
+.docs-main section:last-of-type { border-bottom: 0; }
+.docs-main h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 28px;
+  margin: 0 0 14px;
+}
+.docs-main p { color: #cfc8ba; max-width: 68ch; }
+.docs-main .dim { color: var(--dim); font-size: 14.5px; }
+.docs-main code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 6px;
+  color: #e4ddcd;
+}
+.inline-link { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(240, 73, 124, 0.35); }
+
+pre {
+  background: #09080b;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+  overflow-x: auto;
+  margin: 14px 0;
+}
+pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 12.8px;
+  line-height: 1.75;
+  color: #cdd3dd;
+}
+.k { color: #f0a868; }
+.s { color: #9bd989; }
+.c { color: #5d6470; font-style: italic; }
+.f { color: #73c2ff; }
+.a { color: var(--warn); }
+
+table.api { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+table.api th, table.api td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.api th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); font-weight: 400; }
+table.api td:first-child { white-space: nowrap; color: var(--ink); }
+table.api td { color: var(--dim); }
+
+.callout {
+  border: 1px solid rgba(240, 73, 124, 0.3);
+  background: linear-gradient(135deg, rgba(240, 73, 124, 0.08), transparent 70%);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: #cfc8ba;
+}
+.callout.warn {
+  border-color: rgba(245, 192, 68, 0.32);
+  background: linear-gradient(135deg, rgba(245, 192, 68, 0.08), transparent 70%);
+}
+.callout b { color: var(--ink); }
+
+ul.steps { margin: 8px 0; padding: 0; list-style: none; }
+ul.steps li { position: relative; padding-left: 20px; margin-bottom: 9px; color: #cfc8ba; font-size: 14.5px; }
+ul.steps li::before { content: ""; position: absolute; left: 2px; top: 9px; width: 6px; height: 6px; border-radius: 1px; background: var(--accent); transform: rotate(45deg); }
+ul.steps b { color: var(--ink); }
+
+.docs-main details { border-bottom: 1px solid var(--line); }
+.docs-main summary { cursor: pointer; list-style: none; font-weight: 600; font-size: 15px; padding: 14px 2px; }
+.docs-main summary::-webkit-details-marker { display: none; }
+.docs-main summary::after { content: "+"; float: right; color: var(--accent); font-family: var(--mono); }
+.docs-main details[open] summary::after { content: "–"; }
+.docs-main details p { padding: 0 2px 16px; font-size: 14px; color: var(--dim); }
+
+.docs-foot { margin-top: 36px; text-align: center; }
+.docs-foot .install-pill { margin-bottom: 12px; }
