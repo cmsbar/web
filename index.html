@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMSBar — Git-as-CMS you drop into your own codebase</title>
+    <meta
+      name="description"
+      content="Your client clicks the live site and edits it. You get a pull request. No database, no dashboard to host, no vendor — you own every line."
+    />
+    <meta property="og:title" content="CMSBar — Git-as-CMS" />
+    <meta
+      property="og:description"
+      content="Your client edits the live site. You get a PR."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Geist+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d0c0e'/%3E%3Crect x='7' y='21' width='18' height='4' rx='2' fill='%23f0497c'/%3E%3Crect x='7' y='8' width='12' height='3' rx='1.5' fill='%23efe9e2'/%3E%3Crect x='7' y='14' width='18' height='3' rx='1.5' fill='%23544e55'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <!-- ───────────────────────── NAV ───────────────────────── -->
+    <nav class="nav">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span class="bar"></span>
+        </span>
+        CMSBar
+      </a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="#install">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          Star
+        </a>
+        <a class="btn btn-solid" href="#install">npx cmsbar init</a>
+      </div>
+    </nav>
+
+    <main id="top">
+      <!-- ───────────────────────── HERO ───────────────────────── -->
+      <header class="hero">
+        <p class="kicker reveal">Open source · MIT · copy-in, you own the code</p>
+        <h1 class="reveal d1">
+          Your client edits<br />
+          the <em class="editable-word" id="hero-edit" title="Yes — click me">live&nbsp;site</em>.<br />
+          <span class="muted">You get a</span> <em class="pr-word">pull&nbsp;request</em>.
+        </h1>
+        <p class="lede reveal d2">
+          CMSBar is a Git-as-CMS bar you drop into your own Next.js codebase.
+          Editors click anything on the page and change it in place — every
+          save becomes a branch and a PR in your repo. No database, no
+          dashboard to host, no vendor.
+        </p>
+
+        <div class="hero-actions reveal d3">
+          <button class="install-pill" data-copy="npx cmsbar init" type="button">
+            <span class="dollar">$</span> npx cmsbar init
+            <span class="copy-hint">copy</span>
+          </button>
+          <a class="btn btn-text" href="#demo">Try the demo ↓</a>
+        </div>
+
+        <p class="hero-foot reveal d4">
+          Extracted from production. ~50 files copied into <u>your</u> repo —
+          delete it any time and your content is still just JSON in Git.
+        </p>
+      </header>
+
+      <!-- ───────────────────────── LIVE DEMO ───────────────────────── -->
+      <section class="demo-wrap" id="demo" aria-label="Interactive demo">
+        <div class="demo-stage reveal">
+          <!-- Browser mockup -->
+          <figure class="browser">
+            <figcaption class="browser-chrome">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="url">bakery.example.com <span class="lock">●</span></span>
+              <span class="chrome-note" id="chrome-note">logged in as <b>editor</b></span>
+            </figcaption>
+
+            <div class="browser-body" id="browser-body">
+              <div class="mini-site">
+                <div class="mini-nav">
+                  <span class="mini-logo">Crumb&nbsp;&amp;&nbsp;Co.</span>
+                  <span class="mini-links"><i></i><i></i><i></i></span>
+                </div>
+                <p class="mini-badge" data-path="home.hero.badge">Open daily from 7am</p>
+                <h2
+                  class="mini-headline"
+                  id="demo-headline"
+                  data-path="home.hero.headline"
+                  contenteditable="false"
+                  spellcheck="false"
+                >Sourdough worth waking up for</h2>
+                <p class="mini-sub" data-path="home.hero.subtitle">
+                  Small-batch loaves, baked in Osijek every morning.
+                </p>
+                <span class="mini-cta" data-path="home.hero.cta">Order for pickup</span>
+              </div>
+
+              <!-- the bar -->
+              <div class="cmsbar" id="cmsbar" data-state="idle">
+                <span class="cb-logo">CMSBar</span>
+                <span class="cb-pill cb-pill-live" id="cb-status">Live site</span>
+                <span class="cb-div"></span>
+                <button class="cb-btn cb-btn-accent" id="cb-action" type="button">New draft</button>
+                <button class="cb-btn" type="button">Versions</button>
+                <span class="cb-div"></span>
+                <span class="cb-user">editor</span>
+              </div>
+
+              <div class="demo-coach" id="demo-coach">
+                <span class="coach-arrow">↑</span> click <b>New draft</b>, then click the headline and type
+              </div>
+            </div>
+          </figure>
+
+          <!-- PR side -->
+          <aside class="pr-panel" id="pr-panel" data-state="empty">
+            <div class="pr-empty" id="pr-empty">
+              <span class="pr-empty-icon">⎇</span>
+              <p>Your pull request will appear here.<br /><span>No, really — that's the whole product.</span></p>
+            </div>
+            <div class="pr-card" id="pr-card" hidden>
+              <div class="pr-head">
+                <span class="pr-state" id="pr-state">Open</span>
+                <span class="pr-title">[CMS draft] Homepage</span>
+                <span class="pr-number">#214</span>
+              </div>
+              <div class="pr-meta">
+                <span class="mono">cms/homepage-3f2a91</span> → <span class="mono">main</span>
+                · 1 commit · <span class="mono">content/site-content.json</span>
+              </div>
+              <div class="pr-diff mono" id="pr-diff">
+                <div class="diff-line diff-ctx"><span>@@ home.hero @@</span></div>
+                <div class="diff-line diff-del"><span id="diff-old">- "headline": "Sourdough worth waking up for"</span></div>
+                <div class="diff-line diff-add"><span id="diff-new">+ "headline": "…"</span></div>
+              </div>
+              <div class="pr-actions">
+                <button class="btn-merge" id="btn-merge" type="button">Merge pull request</button>
+                <span class="pr-approved" id="pr-approved" hidden>label: <b>cmsbar approved</b></span>
+              </div>
+              <div class="pr-deployed" id="pr-deployed" hidden>
+                <span class="pulse"></span> Merged → deploy webhook → <b>live</b>. The editor never saw Git.
+              </div>
+            </div>
+          </aside>
+        </div>
+        <p class="demo-caption reveal">
+          ↑ This is a simulation, but it is pixel-for-pixel the real workflow:
+          <b>one draft = one branch = one PR = one version</b>. Review it like any other code change.
+        </p>
+      </section>
+
+      <!-- ───────────────────────── LOGO/TRUST STRIP ───────────────────────── -->
+      <section class="strip reveal" aria-label="Principles">
+        <span>No database</span><i>·</i>
+        <span>No hosted dashboard</span><i>·</i>
+        <span>No vendor lock-in</span><i>·</i>
+        <span>Stateless containers</span><i>·</i>
+        <span>MIT licensed</span><i>·</i>
+        <span>You own the code</span>
+      </section>
+
+      <!-- ───────────────────────── HOW IT WORKS ───────────────────────── -->
+      <section class="section" id="how">
+        <p class="eyebrow reveal">How it works</p>
+        <h2 class="reveal">Your repo <em>is</em> the CMS.</h2>
+        <div class="steps">
+          <div class="step reveal">
+            <span class="step-num mono">01</span>
+            <h3>Click</h3>
+            <p>
+              Editors log in on the live site. Every wrapped element —
+              <span class="mono sm">&lt;T path="home.hero.headline"/&gt;</span> —
+              gets an editing ring. Click it, type. Images, video, rich text,
+              lists: same gesture.
+            </p>
+          </div>
+          <div class="step reveal">
+            <span class="step-num mono">02</span>
+            <h3>Save</h3>
+            <p>
+              All changes batch into <b>one commit</b> on a
+              <span class="mono sm">cms/*</span> branch via the GitHub Git Data
+              API. Unsaved work survives reloads — localStorage for text,
+              IndexedDB for uploads.
+            </p>
+          </div>
+          <div class="step reveal">
+            <span class="step-num mono">03</span>
+            <h3>Review</h3>
+            <p>
+              Each draft is an open PR titled
+              <span class="mono sm">[CMS draft] …</span>. Preview any branch
+              live, fork it, or lock it with an
+              <span class="mono sm">approved</span> label. It's just Git —
+              your reviews, your CI, your history.
+            </p>
+          </div>
+          <div class="step reveal">
+            <span class="step-num mono">04</span>
+            <h3>Merge = deploy</h3>
+            <p>
+              Merging redeploys with the new content baked into the build. The
+              production container never writes to disk — restart it, lose
+              nothing.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── MENTAL MODEL ───────────────────────── -->
+      <section class="section" id="model">
+        <p class="eyebrow reveal">The mental model</p>
+        <h2 class="reveal">Editors see drafts.<br /><em>You see Git.</em></h2>
+        <div class="model reveal">
+          <div class="model-head"><span>The editor sees</span><span>Under the hood</span></div>
+          <div class="model-row"><span>“New draft”</span><span class="mono">branch cms/&lt;slug&gt; + PR [CMS draft] &lt;title&gt;</span></div>
+          <div class="model-row"><span>“Save”</span><span class="mono">one commit, all changes batched</span></div>
+          <div class="model-row"><span>“Versions”</span><span class="mono">open PRs where head ∈ cms/*</span></div>
+          <div class="model-row"><span>“Preview”</span><span class="mono">render site with that branch's JSON</span></div>
+          <div class="model-row"><span>“Approved · locked”</span><span class="mono">reviewer added the approval label</span></div>
+          <div class="model-row"><span>“Fork”</span><span class="mono">new branch off any version's HEAD</span></div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── FEATURES ───────────────────────── -->
+      <section class="section" id="features">
+        <p class="eyebrow reveal">What's in the box</p>
+        <h2 class="reveal">Everything the editor needs.<br /><em>Nothing you have to host.</em></h2>
+        <div class="features">
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">T</span>Editable primitives</h3>
+            <p>Inline text with a rich-text toolbar, images with upload / library / reposition, video &amp; map embeds, icon lists. One <span class="mono sm">path</span> prop each.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">⎇</span>Drafts, previews, forks</h3>
+            <p>Multiple drafts in flight, live preview of any branch, fork from any version, approval label locks a draft read-only.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">∅</span>Stateless by design</h3>
+            <p>All writes go through the GitHub API with a fine-scoped PAT. The container is disposable; unsaved edits live in the editor's browser.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">{}</span>One typed config</h3>
+            <p><span class="mono sm">cms.config.ts</span> owns namespace, content file, media folders, branch prefix, pages, shared-content rules. No magic strings.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">◐</span>Theme it to your brand</h3>
+            <p>Every color in the editor chrome is a <span class="mono sm">--cmsbar-*</span> CSS variable. Re-brand the whole experience from one stylesheet.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">🔒</span>Boring, auditable auth</h3>
+            <p>bcrypt + HMAC session cookie, rate-limited login, shared-element warnings, per-page SEO drawer, optional pre-launch teaser gate.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── INSTALL ───────────────────────── -->
+      <section class="section" id="install">
+        <p class="eyebrow reveal">Install</p>
+        <h2 class="reveal">One command. <em>Your code now.</em></h2>
+        <p class="section-lede reveal">
+          shadcn-style: the CLI copies the source into your project and gets out
+          of the way. There is no runtime dependency on CMSBar — fork it,
+          theme it, delete it.
+        </p>
+        <div class="terminal reveal">
+          <div class="term-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="term-title mono">~/my-next-app</span>
+          </div>
+          <pre class="mono"><code><span class="t-dim">$</span> npx cmsbar init --namespace bakery
+<span class="t-ok">✓</span> 55 files copied <span class="t-dim">(components/cmsbar, lib/cmsbar, app/api/cms, …)</span>
+<span class="t-ok">✓</span> cms.config.ts written <span class="t-dim">— namespace "bakery"</span>
+<span class="t-ok">✓</span> env keys appended to .env.example
+
+<span class="t-dim">Next:</span> wrap your layout, import the theme, add a PAT.
+<span class="t-dim">Then make anything editable:</span>
+
+  <span class="t-tag">&lt;T</span> <span class="t-attr">path</span>=<span class="t-str">"home.hero.headline"</span> <span class="t-attr">as</span>=<span class="t-str">"h1"</span> <span class="t-tag">/&gt;</span></code></pre>
+        </div>
+        <div class="install-cols reveal">
+          <div>
+            <h4 class="mono">What you need</h4>
+            <ul>
+              <li>Next.js App Router project</li>
+              <li>A GitHub repo + fine-scoped PAT <span class="dim">(Contents + PRs)</span></li>
+              <li>~5 minutes</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="mono">What you don't</h4>
+            <ul>
+              <li>A database</li>
+              <li>A CMS subscription</li>
+              <li>Teaching your client Git <span class="dim">(they never see it)</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── PRICING ───────────────────────── -->
+      <section class="section" id="pricing">
+        <p class="eyebrow reveal">Pricing</p>
+        <h2 class="reveal">The CMS is free.<br /><em>The convenience is the product.</em></h2>
+        <p class="section-lede reveal">
+          Self-host everything, forever, free. The hosted control plane — for
+          agencies who'd rather not run token custody, client logins, and
+          previews themselves — is in development.
+        </p>
+        <div class="tiers">
+          <article class="tier reveal">
+            <header><h3>Open source</h3><p class="price">$0 <span>MIT, forever</span></p></header>
+            <ul>
+              <li>The full editor + bar</li>
+              <li>GitHub adapter, PR workflow</li>
+              <li>Self-hosted auth &amp; approvals</li>
+              <li>Community support</li>
+            </ul>
+            <a class="btn btn-solid wide" href="#install">npx cmsbar init</a>
+          </article>
+          <article class="tier tier-featured reveal">
+            <span class="tier-badge">In development</span>
+            <header><h3>Cloud Studio</h3><p class="price">$ <span>projects × editor seats</span></p></header>
+            <ul>
+              <li>Client logins — no GitHub accounts, magic links</li>
+              <li>Token custody — no PAT juggling</li>
+              <li>Per-draft preview deploys + media CDN</li>
+              <li>Approval dashboard across all client sites</li>
+              <li>AI auto-wrap: retrofit an existing site in minutes</li>
+            </ul>
+            <a class="btn btn-accent wide" href="mailto:hello@cmsbar.dev?subject=Cloud%20waitlist">Join the waitlist</a>
+          </article>
+          <article class="tier reveal">
+            <header><h3>White-label</h3><p class="price">$$ <span>for agencies</span></p></header>
+            <ul>
+              <li>Your brand on the bar, not ours</li>
+              <li>Wholesale per-seat pricing</li>
+              <li>Client never sees “CMSBar”</li>
+              <li>Priority support</li>
+            </ul>
+            <a class="btn btn-ghost wide" href="mailto:hello@cmsbar.dev?subject=White-label">Talk to us</a>
+          </article>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── FAQ ───────────────────────── -->
+      <section class="section section-narrow" id="faq">
+        <p class="eyebrow reveal">FAQ</p>
+        <h2 class="reveal">Fair questions.</h2>
+        <div class="faq reveal">
+          <details>
+            <summary>Where does the content actually live?</summary>
+            <p>In <span class="mono sm">content/site-content.json</span> in your repo, imported at build time. Drafts are branches; merging redeploys. Your content's full history is <span class="mono sm">git log</span>.</p>
+          </details>
+          <details>
+            <summary>What happens if I uninstall CMSBar?</summary>
+            <p>Your site keeps rendering the same JSON — the primitives render bundled values when no editor is logged in. Delete the components and inline the strings whenever you like. There's nothing to migrate off.</p>
+          </details>
+          <details>
+            <summary>Does my client need a GitHub account?</summary>
+            <p>No. Editors log in with a username/password on your site; the server holds one fine-scoped PAT. (Hosted client identity with magic links is what Cloud Studio adds.)</p>
+          </details>
+          <details>
+            <summary>What about images and video?</summary>
+            <p>Uploads stage in the browser (IndexedDB), then commit as blobs in the same PR as the text changes. Folder allowlists are configured in <span class="mono sm">cms.config.ts</span>.</p>
+          </details>
+          <details>
+            <summary>Which frameworks?</summary>
+            <p>Next.js App Router today. The core is framework-neutral and the host seam is being carved — TanStack Start is the first candidate adapter. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
+          </details>
+          <details>
+            <summary>Is this production-ready?</summary>
+            <p>CMSBar was extracted from a production site where it ships real content edits as PRs daily. The standalone package is young — pin a commit, read the code (it's yours), and file issues.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── FINAL CTA ───────────────────────── -->
+      <section class="final reveal">
+        <h2>Stop hosting a CMS.<br /><em>Start merging content.</em></h2>
+        <button class="install-pill big" data-copy="npx cmsbar init" type="button">
+          <span class="dollar">$</span> npx cmsbar init <span class="copy-hint">copy</span>
+        </button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <span class="brand-mark sm" aria-hidden="true"><span></span><span></span><span class="bar"></span></span>
+        CMSBar · MIT · made for people who'd rather review a PR than run a CMS
+      </div>
+      <div class="footer-links">
+        <a href="#how">Docs</a>
+        <a href="#install">GitHub</a>
+        <a href="mailto:hello@cmsbar.dev">Contact</a>
+      </div>
+    </footer>
+
+    <div class="toast mono" id="toast" role="status">copied to clipboard</div>
+    <script src="app.js"></script>
+  </body>
+</html>
