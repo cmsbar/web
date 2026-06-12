@@ -462,3 +462,21 @@ main, .nav, .footer { position: relative; z-index: 1; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .grain { animation: none; }
 }
+
+/* ── Promo video ───────────────────────────────────────────────────────────── */
+.video-frame {
+  max-width: 940px;
+  margin: 38px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: 0 40px 120px -40px rgba(240, 73, 124, 0.25), 0 2px 0 rgba(255, 255, 255, 0.03) inset;
+}
+.video-frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #0b0b0f;
+}
