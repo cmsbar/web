@@ -52,9 +52,11 @@
           <a href="#primitives">Primitives</a>
           <a href="#config">cms.config.ts</a>
           <a href="#theming">Theming</a>
+          <a href="#tour">Guided tour</a>
           <a href="#schema">Content &amp; schema</a>
           <p class="dn-group">Operating</p>
           <a href="#workflow">Editor workflow</a>
+          <a href="#publishing">Publishing modes</a>
           <a href="#backend">Storage backend</a>
           <a href="#cloud">Cloud Studio</a>
           <a href="#faq">Troubleshooting</a>
@@ -157,9 +159,9 @@ GITHUB_BASE_BRANCH=main</code></pre>
           <table class="api">
             <tr><th>Primitive</th><th>For</th></tr>
             <tr><td><code>&lt;T path/&gt;</code></td><td>Inline text + a floating rich-text toolbar (bold/italic/underline, optional decor class, links).</td></tr>
-            <tr><td><code>&lt;RichText path/&gt;</code></td><td>Multi-paragraph rich text (block-level editor).</td></tr>
-            <tr><td><code>&lt;EditableImage path positionPath/&gt;</code></td><td>Image with a media browser (library + upload), plus drag-to-reposition stored as a focal point.</td></tr>
-            <tr><td><code>&lt;EditableMedia path/&gt;</code></td><td>Video / image / embeddable media (YouTube, Vimeo, Google Maps URL → embed).</td></tr>
+            <tr><td><code>&lt;RichText path/&gt;</code></td><td>Multi-paragraph rich text (block-level editor). Output ships styled — <code>.cmsbar-prose</code> gives headings, lists, and links visible defaults you can override.</td></tr>
+            <tr><td><code>&lt;EditableImage path positionPath/&gt;</code></td><td>Image with a media browser — folder tree, upload, delete — plus drag-to-reposition stored as a focal point (defaults to a sibling <code>&lt;path&gt;__pos</code> key).</td></tr>
+            <tr><td><code>&lt;EditableMedia path/&gt;</code></td><td>Video / image / embed. YouTube, Instagram, Vimeo, and Google Maps links (or pasted embed code) normalize to the right iframe; images in media slots get the same focal-point repositioning.</td></tr>
             <tr><td><code>&lt;EditableInfoList path/&gt;</code></td><td>Repeatable rows — icon + label + value — with add / remove / drag-reorder. (The “Informacije” block.)</td></tr>
           </table>
           <pre><code><span class="f">&lt;T</span> <span class="a">path</span>=<span class="s">"home.hero.headline"</span> <span class="a">as</span>=<span class="s">"h1"</span> <span class="a">className</span>=<span class="s">"text-5xl"</span> <span class="f">/&gt;</span>
@@ -186,6 +188,8 @@ GITHUB_BASE_BRANCH=main</code></pre>
   <span class="a">sharedPrefixes</span>: [<span class="s">"site."</span>, <span class="s">"nav."</span>, <span class="s">"footer."</span>],
   <span class="a">pages</span>: [{ <span class="a">key</span>: <span class="s">"home"</span>, <span class="a">path</span>: <span class="s">"/"</span>, <span class="a">label</span>: <span class="s">"Home"</span> }],
   <span class="a">richText</span>: { <span class="a">decorClass</span>: <span class="s">""</span> },   <span class="c">// optional decorative span class</span>
+  <span class="a">publishing</span>: { <span class="a">mode</span>: <span class="s">"review"</span> }, <span class="c">// or "direct" — see Publishing modes</span>
+  <span class="a">tour</span>: { <span class="a">autoStart</span>: <span class="k">true</span>, <span class="a">steps</span>: [<span class="c">/* see Guided tour */</span>] },
 });</code></pre>
           <table class="api">
             <tr><th>Key</th><th>What it controls</th></tr>
@@ -194,6 +198,8 @@ GITHUB_BASE_BRANCH=main</code></pre>
             <tr><td><code>sharedPrefixes</code></td><td>Paths that render on many pages — shown with the amber “shared” warning.</td></tr>
             <tr><td><code>pages</code></td><td>Static pages: draft titles + the per-page SEO drawer.</td></tr>
             <tr><td><code>approvedLabel</code></td><td>GitHub label that locks a draft PR read-only.</td></tr>
+            <tr><td><code>publishing.mode</code></td><td><code>"review"</code> (default) — every draft is a PR. <code>"direct"</code> — Save commits straight to the base branch.</td></tr>
+            <tr><td><code>tour</code></td><td>Optional onboarding steps for <code>&lt;CmsTour/&gt;</code>; configuring it adds the ✦ Guide pill to the bar.</td></tr>
           </table>
         </section>
 
@@ -206,7 +212,48 @@ GITHUB_BASE_BRANCH=main</code></pre>
   <span class="a">--cmsbar-accent-strong</span>: <span class="s">#be185d</span>;
   <span class="a">--cmsbar-shared</span>: <span class="s">#fbbf24</span>;        <span class="c">/* shared-element highlight */</span>
   <span class="a">--cmsbar-info</span>: <span class="s">#2563eb</span>;          <span class="c">/* selected states in drawers */</span>
+  <span class="a">--cmsbar-prose-heading-weight</span>: <span class="s">700</span>;  <span class="c">/* rich-text output (.cmsbar-prose) */</span>
+  <span class="a">--cmsbar-prose-link</span>: <span class="s">var(--cmsbar-info)</span>;
 }</code></pre>
+          <p class="dim">
+            Rich-text output is styled by <code>.cmsbar-prose</code> (heading
+            sizes, list markers, underlined links — so every toolbar action is
+            visible out of the box, even under Tailwind preflight). It's
+            declared in <code>@layer base</code>: any site rule of equal
+            specificity overrides it, layered or not.
+          </p>
+        </section>
+
+        <section id="tour">
+          <h2>Guided tour</h2>
+          <p>
+            Optional onboarding, defined entirely in <code>cms.config.ts</code>.
+            With <code>tour</code> configured, the bar gains a <b>✦ Guide</b>
+            pill and <code>&lt;CmsTour/&gt;</code> walks editors through your
+            steps, spotlighting each step's <code>target</code> selector. Steps
+            without a target — or whose target isn't in the DOM yet — render as
+            a centered card, so write those bodies to tell the editor what to
+            click.
+          </p>
+          <pre><code><span class="a">tour</span>: {
+  <span class="a">autoStart</span>: <span class="k">true</span>, <span class="c">// open once per browser for authenticated editors</span>
+  <span class="a">steps</span>: [
+    { <span class="a">id</span>: <span class="s">"welcome"</span>, <span class="a">title</span>: <span class="s">"Welcome"</span>, <span class="a">body</span>: <span class="s">"…"</span> }, <span class="c">// no target → centered card</span>
+    {
+      <span class="a">id</span>: <span class="s">"bar"</span>,
+      <span class="a">title</span>: <span class="s">"The CMS bar"</span>,
+      <span class="a">body</span>: <span class="s">"…"</span>,
+      <span class="a">target</span>: <span class="s">"[data-cms-bar]"</span>, <span class="c">// CSS selector to spotlight</span>
+      <span class="a">placement</span>: <span class="s">"top"</span>,         <span class="c">// default "bottom"</span>
+    },
+  ],
+},</code></pre>
+          <p class="dim">
+            “Done” / “Skip tour” gate <code>autoStart</code> per browser
+            (localStorage); the current step survives the reload that “New
+            draft” causes. Re-open it any time from the bar — or from code:
+            <code>window.dispatchEvent(new CustomEvent("cmsbar:tour:open"))</code>.
+          </p>
         </section>
 
         <section id="schema">
@@ -237,6 +284,30 @@ GITHUB_BASE_BRANCH=main</code></pre>
           <p><a class="inline-link" href="https://playground-blue-alpha.vercel.app/" target="_blank" rel="noopener">Try all of this in the live playground →</a></p>
         </section>
 
+        <section id="publishing">
+          <h2>Publishing modes</h2>
+          <p>
+            Review is the default: every draft is a PR, approval is a label,
+            merge deploys. When a site doesn't need review — your own site, a
+            prototype, a trusted editor — flip one key:
+          </p>
+          <pre><code><span class="c">// cms.config.ts</span>
+<span class="a">publishing</span>: {
+  <span class="a">mode</span>: <span class="s">"direct"</span>, <span class="c">// default: "review"</span>
+},</code></pre>
+          <p>
+            In direct mode, Save commits straight to
+            <code>GITHUB_BASE_BRANCH</code> — no PR to merge, your deploy
+            webhook picks it up. Still one commit per Save, still full history
+            in <code>git log</code>. Flip back to <code>"review"</code>
+            whenever the stakes change.
+          </p>
+          <div class="callout">
+            <b>Review-first on purpose:</b> direct mode trades a reviewer for
+            speed. Use it where a bad save costs a redeploy, not a client.
+          </div>
+        </section>
+
         <section id="backend">
           <h2>Storage backend</h2>
           <p>
@@ -254,12 +325,14 @@ GITHUB_BASE_BRANCH=main</code></pre>
           <p>
             Self-host everything for free. <b>Cloud Studio</b> is the hosted
             control plane for agencies who'd rather not operate it: encrypted
-            PAT custody, client logins without GitHub accounts, an approval
-            dashboard across every connected site, preview deploys + media CDN,
-            and metered AI auto-wrap. The OSS core stays fully functional
-            without it. Cloud Studio is developed in the open at
-            <a class="inline-link" href="https://github.com/cmsbar/cloud" target="_blank" rel="noopener">github.com/cmsbar/cloud</a>
-            and isn't hosted yet — join the waitlist from the
+            PAT custody, client logins via magic links (no GitHub accounts), an
+            approval dashboard across every connected project, and an install
+            wizard that opens a ready-to-merge PR (config, env template,
+            step-by-step guide). It's in development —
+            a demo mode seeded with sample projects already runs — and the OSS
+            core stays fully functional without it. Developed in the open at
+            <a class="inline-link" href="https://github.com/cmsbar/cloud" target="_blank" rel="noopener">github.com/cmsbar/cloud</a>;
+            join the waitlist from the
             <a class="inline-link" href="index.html#pricing">pricing section</a>.
           </p>
           <div class="callout">
@@ -284,7 +357,7 @@ GITHUB_BASE_BRANCH=main</code></pre>
           </details>
           <details>
             <summary>Which frameworks are supported?</summary>
-            <p>Next.js App Router today. The core is framework-neutral; a TanStack Start host adapter is the first planned addition. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
+            <p>Next.js App Router today. The host seam and frameworks roadmap are documented in <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a> — React Router 7, TanStack Start, and Vite adapters are designed, not yet shipped. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
           </details>
         </section>
 

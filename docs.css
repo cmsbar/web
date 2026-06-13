@@ -81,7 +81,7 @@
   padding: 1px 6px;
   color: #e4ddcd;
 }
-.inline-link { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(240, 73, 124, 0.35); }
+/* .inline-link lives in styles.css (shared with the landing page) */
 
 pre {
   background: #09080b;

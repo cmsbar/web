@@ -195,6 +195,7 @@
         <span>No database</span><i>·</i>
         <span>No hosted dashboard</span><i>·</i>
         <span>No vendor lock-in</span><i>·</i>
+        <span>Review-first by default</span><i>·</i>
         <span>Stateless containers</span><i>·</i>
         <span>MIT licensed</span><i>·</i>
         <span>You own the code</span>
@@ -263,6 +264,38 @@
         </div>
       </section>
 
+      <!-- ───────────────────────── PUBLISHING MODES ───────────────────────── -->
+      <section class="section" id="publishing">
+        <p class="eyebrow reveal">Publishing</p>
+        <h2 class="reveal">Review-first by default.<br /><em>Direct when you want speed.</em></h2>
+        <p class="section-lede reveal">
+          Every save opens a pull request — that's the default, and for client
+          work it's the point. But not every site needs review. One config key
+          makes Save commit straight to the base branch instead: no draft, no
+          PR, deploy on save.
+        </p>
+        <div class="mode-switch reveal mono">publishing: { mode: <span class="t-str">"direct"</span> } <span class="t-dim">// default: "review"</span></div>
+        <div class="install-cols reveal">
+          <div>
+            <h4 class="mono">mode: "review" — default</h4>
+            <ul>
+              <li>Drafts, previews, forks, the approval label</li>
+              <li>Every change is a PR someone can read</li>
+              <li>For client sites and anything with stakes</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="mono">mode: "direct"</h4>
+            <ul>
+              <li>Save = one commit on the base branch = deploy</li>
+              <li>Same editor, same primitives, history still <span class="mono sm">git log</span></li>
+              <li>For your own site, prototypes, trusted editors</li>
+            </ul>
+          </div>
+        </div>
+        <p class="hero-foot reveal">One line in <span class="mono sm">cms.config.ts</span>. Flip it back the day the stakes change.</p>
+      </section>
+
       <!-- ───────────────────────── FEATURES ───────────────────────── -->
       <section class="section" id="features">
         <p class="eyebrow reveal">What's in the box</p>
@@ -270,7 +303,19 @@
         <div class="features">
           <article class="feat reveal">
             <h3><span class="feat-ico mono">T</span>Editable primitives</h3>
-            <p>Inline text with a rich-text toolbar, images with upload / library / reposition, video &amp; map embeds, icon lists. One <span class="mono sm">path</span> prop each.</p>
+            <p>Inline text with a rich-text toolbar, images, video, icon lists. Paste a YouTube, Instagram, or Maps link — it becomes the right embed. One <span class="mono sm">path</span> prop each.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">¶</span>Rich text that shows up</h3>
+            <p>Toolbar output is styled out of the box — headings, lists, and editable links via <span class="mono sm">.cmsbar-prose</span>, declared in <span class="mono sm">@layer base</span> so your site's CSS always wins.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">⊹</span>Images that crop right</h3>
+            <p>Drag the focal point on any cropping image — media slots included. The library browses your repo's folders: create, upload, delete, all staged into the same save.</p>
+          </article>
+          <article class="feat reveal">
+            <h3><span class="feat-ico mono">✦</span>Guided tour, built in</h3>
+            <p>Define onboarding steps in <span class="mono sm">cms.config.ts</span>; <span class="mono sm">&lt;CmsTour/&gt;</span> spotlights each one. Auto-starts once per editor, re-runs from the <b>✦ Guide</b> pill in the bar.</p>
           </article>
           <article class="feat reveal">
             <h3><span class="feat-ico mono">⎇</span>Drafts, previews, forks</h3>
@@ -339,6 +384,39 @@
         </div>
       </section>
 
+      <!-- ───────────────────────── CLOUD STUDIO ───────────────────────── -->
+      <section class="section" id="cloud">
+        <p class="eyebrow reveal">Cloud Studio</p>
+        <h2 class="reveal">Twenty client sites.<br /><em>One approval queue.</em></h2>
+        <p class="section-lede reveal">
+          The hosted control plane for agencies running CMSBar across many
+          client repos. In development — a demo seeded with sample projects
+          already runs. The OSS core never depends on it.
+        </p>
+        <div class="install-cols reveal">
+          <div>
+            <h4 class="mono">What it runs for you</h4>
+            <ul>
+              <li>Token custody — PATs encrypted at rest in Studio (the site still keeps its own token for now)</li>
+              <li>Client logins via magic links <span class="dim">(no GitHub accounts)</span></li>
+              <li>One approval dashboard across every connected project</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="mono">How you onboard</h4>
+            <ul>
+              <li>Install wizard opens a ready-to-merge PR <span class="dim">(config, env template, step-by-step guide)</span></li>
+              <li>Demo mode — poke at sample projects before connecting anything real</li>
+              <li>Disconnect any time; your sites keep working</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hero-actions reveal">
+          <a class="btn btn-accent" href="mailto:hello@cmsbar.dev?subject=Cloud%20waitlist">Join the waitlist</a>
+          <a class="btn btn-text" href="https://github.com/cmsbar/cloud" target="_blank" rel="noopener">Developed in the open →</a>
+        </div>
+      </section>
+
       <!-- ───────────────────────── PRICING ───────────────────────── -->
       <section class="section" id="pricing">
         <p class="eyebrow reveal">Pricing</p>
@@ -365,8 +443,9 @@
             <ul>
               <li>Client logins — no GitHub accounts, magic links</li>
               <li>Token custody — no PAT juggling</li>
-              <li>Per-draft preview deploys + media CDN</li>
+              <li>Install wizard (opens a ready-to-merge PR) + demo mode <span class="dim">(runs today)</span></li>
               <li>Approval dashboard across all client sites</li>
+              <li>Per-draft preview deploys + media CDN</li>
               <li>AI auto-wrap: retrofit an existing site in minutes</li>
             </ul>
             <a class="btn btn-accent wide" href="mailto:hello@cmsbar.dev?subject=Cloud%20waitlist">Join the waitlist</a>
@@ -407,7 +486,7 @@
           </details>
           <details>
             <summary>Which frameworks?</summary>
-            <p>Next.js App Router today. The core is framework-neutral and the host seam is being carved — TanStack Start is the first candidate adapter. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
+            <p>Next.js App Router today. The host seam and frameworks roadmap are documented in <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a> — React Router 7, TanStack Start, and Vite adapters are designed, not yet shipped. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
           </details>
           <details>
             <summary>Is this production-ready?</summary>

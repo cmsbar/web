@@ -383,6 +383,16 @@ main, .nav, .footer { position: relative; z-index: 1; }
 .t-attr { color: var(--warn); }
 .t-str { color: var(--ok); }
 
+/* publishing-mode one-liner */
+.mode-switch {
+  display: inline-block; margin-top: 34px;
+  font-size: 14.5px; color: var(--ink);
+  background: #0a090c; border: 1px solid var(--line-2); border-radius: 12px;
+  padding: 15px 22px;
+}
+
+.inline-link { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(240, 73, 124, 0.35); }
+
 .install-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
 @media (max-width: 640px) { .install-cols { grid-template-columns: 1fr; } }
 .install-cols > div { border: 1px dashed var(--line-2); border-radius: 14px; padding: 18px 22px; }
