@@ -70,6 +70,14 @@
   font-size: 28px;
   margin: 0 0 14px;
 }
+.docs-main h3 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  margin: 26px 0 8px;
+}
 .docs-main p { color: #cfc8ba; max-width: 68ch; }
 .docs-main .dim { color: var(--dim); font-size: 14.5px; }
 .docs-main code {

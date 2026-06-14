@@ -46,6 +46,7 @@
           <p class="dn-group">Getting started</p>
           <a href="#what">What CMSBar is</a>
           <a href="#install">Install</a>
+          <a href="#frameworks">Frameworks</a>
           <a href="#wire">Wire the layout</a>
           <a href="#env">Environment</a>
           <p class="dn-group">Building</p>
@@ -69,7 +70,8 @@
           <p class="kicker">Documentation</p>
           <h1>Drop a Git-as-CMS into your codebase.</h1>
           <p class="lede">
-            CMSBar copies into your Next.js repo (shadcn-style). Editors change
+            CMSBar copies into your React repo (shadcn-style) — Next.js, React
+            Router 7, TanStack Start, a Vite SPA, or Astro. Editors change
             content on the live site; each save is a branch and a pull request.
             No database, no hosted dashboard required, no lock-in.
           </p>
@@ -79,11 +81,13 @@
           <h2>What CMSBar is</h2>
           <p>
             A small set of React components and API routes you install into a
-            Next.js App Router project. You wrap editable content with
-            primitives like <code>&lt;T path="…"/&gt;</code>; logged-in editors
-            click and edit them in place. On Save, all changes commit as one
-            commit on a <code>cms/*</code> branch and open a GitHub PR. Merging
-            redeploys with the new content baked into the build.
+            React project — Next.js, React Router 7, TanStack Start, a Vite SPA,
+            or Astro (see <a class="inline-link" href="#frameworks">Frameworks</a>).
+            You wrap editable content with primitives like
+            <code>&lt;T path="…"/&gt;</code>; logged-in editors click and edit
+            them in place. On Save, all changes commit as one commit on a
+            <code>cms/*</code> branch and open a GitHub PR. Merging redeploys with
+            the new content baked into the build.
           </p>
           <div class="callout">
             <b>One mental model:</b> one draft = one branch = one PR = one
@@ -93,22 +97,168 @@
 
         <section id="install">
           <h2>Install</h2>
-          <p>In an existing Next.js (App Router) project:</p>
-          <pre><code><span class="c"># copies components/cmsbar, lib/cmsbar, app/api/cms, a config, a theme</span>
+          <p>The CLI has two modes. Start a fresh site on any supported host:</p>
+          <pre><code><span class="c"># scaffold a host starter + assemble the neutral CMSBar core into it</span>
+npx cmsbar new <span class="s">my-site</span> --framework <span class="s">next</span>   <span class="c"># next | react-router | tanstack-start | vite | astro</span></code></pre>
+          <p>Or add CMSBar to an existing project (defaults to Next):</p>
+          <pre><code><span class="c"># copies components/cmsbar, lib/cmsbar, a config, a theme (+ Next route handlers)</span>
 npx cmsbar init --namespace <span class="s">mysite</span>
 npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
           <p class="dim">
-            The CLI detects <code>src/</code> vs root layout, writes a
-            <code>cms.config.ts</code>, and appends the env keys it needs to
+            For Next, <code>init</code> is a full copy-in (route handlers, login
+            page) and detects <code>src/</code> vs root layout. For the other
+            hosts it drops the neutral core + the host adapter glue and prints
+            the wiring steps (mount one API route, wrap the root). Either way it
+            writes a <code>cms.config.ts</code> and appends the env keys to
             <code>.env.example</code>. Nothing depends on the CLI afterward —
-            the code is yours. The template and CLI live at
+            the code is yours. The template, CLI, and per-host examples live at
             <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">github.com/cmsbar/cmsbar</a>.
+          </p>
+          <div class="callout">
+            <b>Host prerequisite:</b> Tailwind v4 (the editor chrome is styled
+            with v4 utilities + <code>styles/cmsbar.css</code> variables) and a
+            GitHub repo + fine-scoped PAT. See <a class="inline-link" href="#frameworks">Frameworks</a> for what each host needs.
+          </div>
+        </section>
+
+        <section id="frameworks">
+          <h2>Frameworks</h2>
+          <p>
+            CMSBar is a framework-neutral React core (~64% of the code, shared
+            untouched) plus a thin per-host seam: one client host
+            (<code>usePathname</code>, <code>navigate</code>, <code>Image</code>,
+            <code>apiBase</code> — with DOM defaults) and one server mount. The
+            entire API is a single dispatcher — <code>handleCmsRequest</code> for
+            framework route handlers, <code>createCmsApi()</code> for a
+            fetch-style mount — wired as one catch-all route. The seam is frozen
+            and validated across all five hosts; a 152-test handler-level harness
+            backs it.
+          </p>
+          <p>
+            Five React-family hosts ship today, each with a live example that
+            builds and runs in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples" target="_blank" rel="noopener">examples/</a>.
+            Scaffold any of them with <code>npx cmsbar new &lt;dir&gt; --framework &lt;fw&gt;</code>.
+          </p>
+
+          <table class="api">
+            <tr><th>Framework</th><th>Status</th><th>What the adapter mounts</th></tr>
+            <tr><td>Next.js (App Router)</td><td>shipped</td><td>Full copy-in: route handlers, login page, RSC layout wiring.</td></tr>
+            <tr><td>React Router 7</td><td>shipped</td><td>One resource route → <code>handleCmsRequest</code>; root-loader session.</td></tr>
+            <tr><td>TanStack Start</td><td>shipped</td><td>One server route → <code>handleCmsRequest</code>; <code>head()</code> meta. Modern Node.</td></tr>
+            <tr><td>Vite + React SPA</td><td>shipped</td><td>DOM-default client + Hono companion (<code>createCmsApi</code>); boot-time session.</td></tr>
+            <tr><td>Astro (React islands)</td><td>shipped</td><td>One endpoint → <code>createCmsApi</code>; editor-gated island hydration.</td></tr>
+            <tr><td>Next.js Pages Router</td><td>community</td><td>A small <code>(req,res)</code> shim over the neutral handlers — seam published.</td></tr>
+            <tr><td>SvelteKit / Nuxt</td><td>roadmap</td><td>A “CMSBar protocol” UI rewrite (core/handlers stay, components rebuilt). Not shipped.</td></tr>
+          </table>
+
+          <h3>Next.js (App Router)</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">next</span></code></pre>
+          <p class="dim">
+            The reference host. Mounts the CMS API as route handlers under
+            <code>app/api/cms/*</code>, a login page, and RSC layout wiring that
+            computes <code>initialCms</code> server-side. The full wiring is in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/next" target="_blank" rel="noopener">examples/next</a>.
+          </p>
+
+          <h3>React Router 7 (framework mode)</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">react-router</span></code></pre>
+          <p class="dim">
+            The whole API mounts as <b>one resource route</b>
+            (<code>loader</code>/<code>action</code> → <code>handleCmsRequest(request)</code>);
+            the root loader reads the session cookie into <code>initialCms</code>,
+            nav uses <code>useLocation</code>/<code>useNavigate</code>, and route
+            <code>meta</code> is built from <code>resolvePageMeta()</code>. SSR, so
+            SEO and the teaser gate work as on Next. See
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/react-router" target="_blank" rel="noopener">examples/react-router</a>.
+          </p>
+
+          <h3>TanStack Start</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">tanstack-start</span></code></pre>
+          <p class="dim">
+            The API mounts as <b>one splat server route</b> →
+            <code>handleCmsRequest(request)</code> (plain routes, not server
+            functions); the root loader builds <code>initialCms</code> and page
+            meta comes from a route <code>head()</code>. SSR, so SEO and the
+            teaser gate work. See
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/tanstack-start" target="_blank" rel="noopener">examples/tanstack-start</a>.
+          </p>
+          <div class="callout warn">
+            <b>Caveat:</b> TanStack Start (Vite&nbsp;7 toolchain) requires a
+            modern Node — Node&nbsp;20.19+ or 22.12+. Older Node won't build the
+            example.
+          </div>
+
+          <h3>Vite + React SPA (+ Hono companion)</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">vite</span></code></pre>
+          <p class="dim">
+            A client-only SPA needs nowhere for the write token or session
+            signing to live, so this host ships a <b>small companion server</b>:
+            the client uses the <code>HostProvider</code> DOM defaults and fetches
+            its session on boot (<code>GET /api/cms/session</code>); the companion
+            (Hono) mounts the whole API in one line —
+            <code>app.all("/api/cms/*", (c) =&gt; cms(c.req.raw))</code> over
+            <code>createCmsApi()</code> — and serves the built <code>dist/</code>
+            on the same origin so the signed cookie just works. See
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/vite-spa" target="_blank" rel="noopener">examples/vite-spa</a>.
+          </p>
+          <div class="callout warn">
+            <b>Caveats (no SSR):</b> a <code>curl /</code> returns the static
+            <code>index.html</code> shell + the bundle script, so
+            <b>SEO / <code>pageMeta</code> edits affect nothing a crawler sees</b>
+            — the SEO drawer still writes metadata into the content PR (ready for
+            an SSR/SSG host) but is a no-op for crawlers here. There's <b>no
+            teaser ("coming soon") gate</b> (no server render to gate), and content
+            ships inside the JS bundle, so the page renders after the bundle boots.
+            The companion is one long-lived process, so the in-memory rate limiter
+            is fine.
+          </div>
+
+          <h3>Astro (React islands)</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">astro</span></code></pre>
+          <p class="dim">
+            The whole API is <b>one catch-all endpoint</b> —
+            <code>export const ALL = ({ request }) =&gt; createCmsApi()(request)</code>.
+            The content region is authored once as a React component;
+            <code>index.astro</code> reads the editor cookie server-side and
+            applies <code>client:load</code> <b>only when an editor is present</b>.
+            See
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/astro" target="_blank" rel="noopener">examples/astro</a>.
+          </p>
+          <div class="callout warn">
+            <b>Editor-gated hydration:</b> public visitors and crawlers always get
+            <b>static, fully server-rendered HTML with zero CMS JavaScript</b> —
+            the content is in the markup, so this is SEO-equivalent to a static
+            page (unlike the Vite SPA). The hydrated React island — where editing
+            happens — is served <b>only to a logged-in editor</b>.
+          </div>
+
+          <h3>Add to an existing project</h3>
+          <p>
+            Already have one of these hosts? <code>npx cmsbar init --framework &lt;fw&gt;</code>
+            drops the neutral core (and, for non-Next hosts, the adapter glue) and
+            prints the wiring: mount one API route → <code>handleCmsRequest</code> /
+            <code>createCmsApi</code>, and wrap your root with the host +
+            <code>&lt;ContentProvider&gt;</code> + <code>&lt;CmsBar/&gt;</code>. Next is a
+            full copy-in and detects your layout automatically.
+          </p>
+          <p class="dim">
+            The host-seam audit, the per-framework adapter specs, and the
+            SvelteKit/Nuxt roadmap are documented in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a>.
           </p>
         </section>
 
         <section id="wire">
           <h2>Wire the layout</h2>
-          <p>Wrap your root layout once so every page can resolve content:</p>
+          <p>
+            Wrap your root layout once so every page can resolve content. The
+            example below is Next.js; on the other hosts the same provider is
+            wired from the root loader (React Router / TanStack Start) or the
+            island root (Astro / Vite SPA) — see
+            <a class="inline-link" href="#frameworks">Frameworks</a>.
+          </p>
+          <p>For Next.js (App Router):</p>
           <pre><code><span class="c">// app/layout.tsx</span>
 <span class="k">import</span> { cookies } <span class="k">from</span> <span class="s">"next/headers"</span>;
 <span class="k">import</span> { getContent } <span class="k">from</span> <span class="s">"@/lib/content"</span>;
@@ -357,7 +507,7 @@ GITHUB_BASE_BRANCH=main</code></pre>
           </details>
           <details>
             <summary>Which frameworks are supported?</summary>
-            <p>Next.js App Router today. The host seam and frameworks roadmap are documented in <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a> — React Router 7, TanStack Start, and Vite adapters are designed, not yet shipped. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
+            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands, editor-gated hydration). See the <a class="inline-link" href="#frameworks">Frameworks section</a> for per-host quickstarts and caveats, and <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a> for the host-seam audit and the SvelteKit/Nuxt roadmap. A pure SPA needs the companion server for the write token — the token never lives in the browser.</p>
           </details>
         </section>
 

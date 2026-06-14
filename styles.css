@@ -354,6 +354,35 @@ main, .nav, .footer { position: relative; z-index: 1; }
 .model-row .mono { font-size: 12.5px; color: var(--dim); }
 @media (max-width: 640px) { .model-head, .model-row { grid-template-columns: 1fr; gap: 4px; } }
 
+/* ── framework matrix ── */
+.fw-matrix { margin-top: 36px; border: 1px solid var(--line-2); border-radius: 16px; overflow: hidden; }
+.fw-head, .fw-row {
+  display: grid; grid-template-columns: minmax(140px, 0.9fr) 96px 1.7fr;
+  gap: 16px; padding: 13px 20px; align-items: baseline;
+}
+.fw-head {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--faint);
+  background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.fw-row { border-bottom: 1px solid var(--line); transition: background 0.15s; }
+.fw-row:last-child { border-bottom: 0; }
+.fw-row:hover { background: var(--panel); }
+.fw-row .fw-name { font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--ink); }
+.fw-row .fw-name small { font-family: var(--sans); font-style: normal; font-size: 11.5px; color: var(--faint); display: block; letter-spacing: 0.01em; }
+.fw-row .fw-note { font-size: 13.5px; color: var(--dim); }
+.fw-row .fw-note .mono { font-size: 12px; color: var(--dim); }
+.fw-row .fw-note .warn { color: var(--warn); }
+.fw-tag { font-family: var(--mono); font-size: 10.5px; border-radius: 99px; padding: 3px 10px; white-space: nowrap; justify-self: start; }
+.fw-tag-shipped { background: rgba(74, 222, 148, 0.14); color: var(--ok); }
+.fw-tag-roadmap { background: rgba(245, 192, 68, 0.14); color: var(--warn); }
+.fw-tag-community { background: rgba(155, 147, 163, 0.14); color: var(--dim); }
+@media (max-width: 720px) {
+  .fw-head { display: none; }
+  .fw-row { grid-template-columns: 1fr; gap: 6px; }
+  .fw-row .fw-tag { justify-self: start; }
+}
+
 /* features */
 .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 38px; }
 @media (max-width: 980px) { .features { grid-template-columns: repeat(2, 1fr); } }

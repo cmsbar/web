@@ -40,6 +40,7 @@
       </a>
       <div class="nav-links">
         <a href="#how">How it works</a>
+        <a href="#frameworks">Frameworks</a>
         <a href="#features">Features</a>
         <a href="https://playground-blue-alpha.vercel.app/" target="_blank" rel="noopener">Demo</a>
         <a href="docs.html">Docs</a>
@@ -66,7 +67,8 @@
           <span class="muted">You get a</span> <em class="pr-word">pull&nbsp;request</em>.
         </h1>
         <p class="lede reveal d2">
-          CMSBar is a Git-as-CMS bar you drop into your own Next.js codebase.
+          CMSBar is a Git-as-CMS bar you drop into your own React codebase —
+          Next.js, React Router 7, TanStack Start, a Vite SPA, or Astro.
           Editors click anything on the page and change it in place — every
           save becomes a branch and a PR in your repo. No database, no
           dashboard to host, no vendor.
@@ -249,6 +251,90 @@
         </div>
       </section>
 
+      <!-- ───────────────────────── FRAMEWORKS ───────────────────────── -->
+      <section class="section" id="frameworks">
+        <p class="eyebrow reveal">Works with your framework</p>
+        <h2 class="reveal">One core. <em>Five React hosts.</em></h2>
+        <p class="section-lede reveal">
+          A framework-neutral core (~64% of the code, untouched per host) plus a
+          thin per-host seam: one client host (pathname, navigate, image,
+          apiBase — with DOM defaults) and one server mount. The whole API is a
+          single dispatcher — <span class="mono sm">handleCmsRequest</span> /
+          <span class="mono sm">createCmsApi</span> — mounted as one catch-all
+          route. The seam is frozen and validated across all five; a
+          152-test handler-level harness backs it.
+        </p>
+        <p class="section-lede reveal">
+          Each shipped host has a live example in the repo that builds and runs:
+          <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples" target="_blank" rel="noopener">examples/</a>.
+        </p>
+
+        <div class="fw-matrix reveal">
+          <div class="fw-head">
+            <span>Framework</span><span>Status</span><span>What the adapter mounts</span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">Next.js<small>App Router</small></span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">Full copy-in: route handlers, login page, RSC layout wiring. <span class="mono">examples/next</span></span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">React Router 7<small>framework mode</small></span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">One resource route → <span class="mono">handleCmsRequest</span>; root-loader session; nav hooks. <span class="mono">examples/react-router</span></span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">TanStack Start</span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">One server route → <span class="mono">handleCmsRequest</span>; root-loader session; <span class="mono">head()</span> meta. <span class="warn">Needs a modern Node (≥ 20.19 / 22.12).</span> <span class="mono">examples/tanstack-start</span></span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">Vite + React SPA<small>+ Hono companion</small></span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">DOM-default client host + a small companion server (<span class="mono">createCmsApi</span>); boot-time session fetch. <span class="warn">No SSR — SEO/teaser limited (see docs).</span> <span class="mono">examples/vite-spa</span></span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">Astro<small>React islands</small></span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">One endpoint → <span class="mono">createCmsApi</span>; <span class="warn">editor-gated hydration</span> — public visitors get static zero-JS HTML; the page hydrates only when an editor cookie is present. <span class="mono">examples/astro</span></span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">Next.js Pages Router</span>
+            <span class="fw-tag fw-tag-community">community</span>
+            <span class="fw-note">A small <span class="mono">(req,res)</span> shim over the neutral handlers. Seam published; community-adapter tier.</span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">SvelteKit · Nuxt</span>
+            <span class="fw-tag fw-tag-roadmap">roadmap</span>
+            <span class="fw-note">A separate “CMSBar protocol” UI rewrite — the neutral core/handlers stay, the component layer is rebuilt in Svelte/Vue. Planned after the React adapters get adoption.</span>
+          </div>
+        </div>
+
+        <div class="install-cols reveal" style="margin-top: 28px">
+          <div>
+            <h4 class="mono">Fresh site</h4>
+            <p class="mono sm" style="color: var(--ok); margin: 0 0 8px">$ npx cmsbar new my-site --framework astro</p>
+            <ul>
+              <li>Scaffolds a per-host starter + assembles the neutral core into it</li>
+              <li><span class="mono sm">--framework</span> <span class="mono sm">next | react-router | tanstack-start | vite | astro</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="mono">Existing project</h4>
+            <p class="mono sm" style="color: var(--ok); margin: 0 0 8px">$ npx cmsbar init --framework react-router</p>
+            <ul>
+              <li>Next: full copy-in. Others: core + adapter glue + printed wiring steps</li>
+              <li>You own the code afterward — nothing depends on the CLI</li>
+            </ul>
+          </div>
+        </div>
+        <p class="hero-foot reveal">
+          Per-framework quickstarts, the host seam, and the roadmap live in
+          <a class="inline-link" href="docs.html#frameworks">the docs</a> and
+          <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a>.
+        </p>
+      </section>
+
       <!-- ───────────────────────── MENTAL MODEL ───────────────────────── -->
       <section class="section" id="model">
         <p class="eyebrow reveal">The mental model</p>
@@ -347,7 +433,7 @@
         <p class="section-lede reveal">
           shadcn-style: the CLI copies the source into your project and gets out
           of the way. There is no runtime dependency on CMSBar — fork it,
-          theme it, delete it.
+          theme it, delete it. Starting fresh? <span class="mono sm">npx cmsbar new my-site --framework &lt;fw&gt;</span> scaffolds a host and assembles the core. Below: adding it to an existing Next.js app.
         </p>
         <div class="terminal reveal">
           <div class="term-bar">
@@ -368,7 +454,7 @@
           <div>
             <h4 class="mono">What you need</h4>
             <ul>
-              <li>Next.js App Router project</li>
+              <li>A supported React host <span class="dim">(Next, React Router 7, TanStack Start, Vite SPA, or Astro)</span> + Tailwind v4</li>
               <li>A GitHub repo + fine-scoped PAT <span class="dim">(Contents + PRs)</span></li>
               <li>~5 minutes</li>
             </ul>
@@ -486,7 +572,7 @@
           </details>
           <details>
             <summary>Which frameworks?</summary>
-            <p>Next.js App Router today. The host seam and frameworks roadmap are documented in <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a> — React Router 7, TanStack Start, and Vite adapters are designed, not yet shipped. Client-only SPAs need the hosted gateway (a write token can't live in a browser).</p>
+            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands). See the <a class="inline-link" href="#frameworks">frameworks matrix</a> and <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a>. SvelteKit/Nuxt are on the roadmap (a separate UI rewrite, not an adapter). A pure SPA still needs a tiny server for the write token — that's the companion server, not a browser-held token.</p>
           </details>
           <details>
             <summary>Is this production-ready?</summary>
