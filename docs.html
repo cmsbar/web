@@ -291,10 +291,10 @@ npm i bcryptjs clsx tailwind-merge lucide-react   <span class="c"># React hosts;
             SvelteKit / Nuxt get their native SFC UI copied in.
           </p>
           <p class="dim">
-            The host-seam audit and the per-framework adapter specs live in
-            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/FRAMEWORKS.md" target="_blank" rel="noopener">docs/FRAMEWORKS.md</a>;
-            the non-React protocol contract is in
-            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a>.
+            The non-React protocol contract is in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a>,
+            and every host has a runnable
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples" target="_blank" rel="noopener">example</a>.
           </p>
         </section>
 
@@ -567,7 +567,7 @@ GITHUB_BASE_BRANCH=main</code></pre>
           </details>
           <details>
             <summary>Which frameworks are supported?</summary>
-            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands, editor-gated hydration). <b>SvelteKit (Svelte 5) and Nuxt (Vue 3) also ship as native UIs</b> on the same protocol — so seven hosts scaffold with <code>npx cmsbar new --framework &lt;fw&gt;</code>. See the <a class="inline-link" href="#frameworks">Frameworks section</a> for per-host quickstarts and caveats, <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/FRAMEWORKS.md" target="_blank" rel="noopener">docs/FRAMEWORKS.md</a> for the host-seam audit, and <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a> for the non-React contract. A pure SPA needs the companion server for the write token — the token never lives in the browser.</p>
+            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands, editor-gated hydration). <b>SvelteKit (Svelte 5) and Nuxt (Vue 3) also ship as native UIs</b> on the same protocol — so seven hosts scaffold with <code>npx cmsbar new --framework &lt;fw&gt;</code>. See the <a class="inline-link" href="#frameworks">Frameworks section</a> for per-host quickstarts and caveats, and <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a> for the non-React contract. A pure SPA needs the companion server for the write token — the token never lives in the browser.</p>
           </details>
         </section>
 
