@@ -67,8 +67,9 @@
           <span class="muted">You get a</span> <em class="pr-word">pull&nbsp;request</em>.
         </h1>
         <p class="lede reveal d2">
-          CMSBar is a Git-as-CMS bar you drop into your own React codebase —
-          Next.js, React Router 7, TanStack Start, a Vite SPA, or Astro.
+          CMSBar is a Git-as-CMS bar you drop into your own codebase — five
+          React hosts (Next.js, React Router 7, TanStack Start, a Vite SPA,
+          Astro) plus native SvelteKit and Nuxt UIs on the same protocol.
           Editors click anything on the page and change it in place — every
           save becomes a branch and a PR in your repo. No database, no
           dashboard to host, no vendor.
@@ -254,15 +255,18 @@
       <!-- ───────────────────────── FRAMEWORKS ───────────────────────── -->
       <section class="section" id="frameworks">
         <p class="eyebrow reveal">Works with your framework</p>
-        <h2 class="reveal">One core. <em>Five React hosts.</em></h2>
+        <h2 class="reveal">One core. <em>Seven hosts.</em></h2>
         <p class="section-lede reveal">
           A framework-neutral core (~64% of the code, untouched per host) plus a
           thin per-host seam: one client host (pathname, navigate, image,
           apiBase — with DOM defaults) and one server mount. The whole API is a
           single dispatcher — <span class="mono sm">handleCmsRequest</span> /
           <span class="mono sm">createCmsApi</span> — mounted as one catch-all
-          route. The seam is frozen and validated across all five; a
-          152-test handler-level harness backs it.
+          route. The seam is frozen and validated across all five React hosts; a
+          156-test handler-level harness backs it. Two non-React UIs —
+          <span class="mono sm">SvelteKit</span> (Svelte&nbsp;5) and
+          <span class="mono sm">Nuxt</span> (Vue&nbsp;3) — reuse that same core +
+          handlers, with the component layer rebuilt natively.
         </p>
         <p class="section-lede reveal">
           Each shipped host has a live example in the repo that builds and runs:
@@ -304,9 +308,14 @@
             <span class="fw-note">A small <span class="mono">(req,res)</span> shim over the neutral handlers. Seam published; community-adapter tier.</span>
           </div>
           <div class="fw-row">
-            <span class="fw-name">SvelteKit · Nuxt</span>
-            <span class="fw-tag fw-tag-roadmap">roadmap</span>
-            <span class="fw-note">A separate “CMSBar protocol” UI rewrite — the neutral core/handlers stay, the component layer is rebuilt in Svelte/Vue. Planned after the React adapters get adoption.</span>
+            <span class="fw-name">SvelteKit<small>native Svelte 5 UI</small></span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">The neutral core + handlers stay; the whole component layer is rebuilt in Svelte 5. One catch-all <span class="mono">+server.ts</span> → <span class="mono">createCmsApi</span>; SSR. Feature parity, browser-verified. <span class="mono">examples/sveltekit</span></span>
+          </div>
+          <div class="fw-row">
+            <span class="fw-name">Nuxt<small>native Vue 3 UI</small></span>
+            <span class="fw-tag fw-tag-shipped">shipped</span>
+            <span class="fw-note">Same protocol, component layer rebuilt in Vue 3. One Nitro catch-all route → <span class="mono">createCmsApi</span>; SSR. Feature parity, browser-verified. <span class="mono">examples/nuxt</span></span>
           </div>
         </div>
 
@@ -316,7 +325,7 @@
             <p class="mono sm" style="color: var(--ok); margin: 0 0 8px">$ npx cmsbar new my-site --framework astro</p>
             <ul>
               <li>Scaffolds a per-host starter + assembles the neutral core into it</li>
-              <li><span class="mono sm">--framework</span> <span class="mono sm">next | react-router | tanstack-start | vite | astro</span></li>
+              <li><span class="mono sm">--framework</span> <span class="mono sm">next | react-router | tanstack-start | vite | astro | sveltekit | nuxt</span></li>
             </ul>
           </div>
           <div>
@@ -329,9 +338,12 @@
           </div>
         </div>
         <p class="hero-foot reveal">
-          Per-framework quickstarts, the host seam, and the roadmap live in
-          <a class="inline-link" href="docs.html#frameworks">the docs</a> and
-          <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a>.
+          Per-framework quickstarts and the host seam live in
+          <a class="inline-link" href="docs.html#frameworks">the docs</a>; the
+          full audit is in
+          <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/FRAMEWORKS.md" target="_blank" rel="noopener">docs/FRAMEWORKS.md</a>
+          and the non-React contract in
+          <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a>.
         </p>
       </section>
 
@@ -454,7 +466,7 @@
           <div>
             <h4 class="mono">What you need</h4>
             <ul>
-              <li>A supported React host <span class="dim">(Next, React Router 7, TanStack Start, Vite SPA, or Astro)</span> + Tailwind v4</li>
+              <li>A supported host — the five React hosts <span class="dim">(Next, React Router 7, TanStack Start, Vite SPA, Astro)</span> + Tailwind v4, or <span class="dim">SvelteKit / Nuxt</span> with the native UI (plain CSS, no Tailwind)</li>
               <li>A GitHub repo + fine-scoped PAT <span class="dim">(Contents + PRs)</span></li>
               <li>~5 minutes</li>
             </ul>
@@ -481,18 +493,19 @@
         </p>
         <div class="install-cols reveal">
           <div>
-            <h4 class="mono">What it runs for you</h4>
+            <h4 class="mono">What it runs for you (v0.2)</h4>
             <ul>
-              <li>Token custody — PATs encrypted at rest in Studio (the site still keeps its own token for now)</li>
-              <li>Client logins via magic links <span class="dim">(no GitHub accounts)</span></li>
-              <li>One approval dashboard across every connected project</li>
+              <li>Approval dashboard across every connected repo — all open <span class="mono sm">cms/*</span> drafts, who's editing, one-click Approve / Unapprove / Merge</li>
+              <li>Per-project chips: live install status + publishing mode <span class="dim">(parsed from cms.config.ts)</span></li>
+              <li>Token custody — the PAT is validated, then stored AES-256-GCM encrypted; it never reaches the browser <span class="dim">(the site still keeps its own token for now)</span></li>
+              <li>Admin sign-in via magic links</li>
             </ul>
           </div>
           <div>
             <h4 class="mono">How you onboard</h4>
             <ul>
-              <li>Install wizard opens a ready-to-merge PR <span class="dim">(config, env template, step-by-step guide)</span></li>
-              <li>Demo mode — poke at sample projects before connecting anything real</li>
+              <li>The <span class="mono sm">/setup</span> wizard opens a <span class="mono sm">cmsbar/install</span> PR <span class="dim">(cms.config.ts, .env.example, INSTALL-CMSBAR.md)</span> with a byte-for-byte preview</li>
+              <li>Demo mode — two seeded projects (no GitHub calls, no real PAT) to walk the dashboard + wizard end-to-end</li>
               <li>Disconnect any time; your sites keep working</li>
             </ul>
           </div>
@@ -527,12 +540,12 @@
             <span class="tier-badge">In development</span>
             <header><h3>Cloud Studio</h3><p class="price">$ <span>projects × editor seats</span></p></header>
             <ul>
-              <li>Client logins — no GitHub accounts, magic links</li>
-              <li>Token custody — no PAT juggling</li>
-              <li>Install wizard (opens a ready-to-merge PR) + demo mode <span class="dim">(runs today)</span></li>
-              <li>Approval dashboard across all client sites</li>
-              <li>Per-draft preview deploys + media CDN</li>
-              <li>AI auto-wrap: retrofit an existing site in minutes</li>
+              <li>Approval dashboard across all client sites <span class="dim">(runs today)</span></li>
+              <li>Install wizard — opens a ready-to-merge PR — + demo mode <span class="dim">(runs today)</span></li>
+              <li>Token custody — encrypted PATs, no juggling <span class="dim">(runs today)</span></li>
+              <li>Client logins — magic links, no GitHub accounts <span class="dim">(planned)</span></li>
+              <li>Per-draft preview deploys + media CDN <span class="dim">(planned)</span></li>
+              <li>AI auto-wrap: retrofit an existing site in minutes <span class="dim">(planned)</span></li>
             </ul>
             <a class="btn btn-accent wide" href="mailto:hello@cmsbar.dev?subject=Cloud%20waitlist">Join the waitlist</a>
           </article>
@@ -572,7 +585,7 @@
           </details>
           <details>
             <summary>Which frameworks?</summary>
-            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands). See the <a class="inline-link" href="#frameworks">frameworks matrix</a> and <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a>. SvelteKit/Nuxt are on the roadmap (a separate UI rewrite, not an adapter). A pure SPA still needs a tiny server for the write token — that's the companion server, not a browser-held token.</p>
+            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands). Beyond React, <b>SvelteKit (Svelte 5) and Nuxt (Vue 3) now ship as native UIs</b> on the same protocol — full feature parity, browser-verified — so all seven scaffold with <span class="mono sm">npx cmsbar new --framework &lt;fw&gt;</span>. See the <a class="inline-link" href="#frameworks">frameworks matrix</a> and <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md + PROTOCOL.md in the repo</a>. A pure SPA still needs a tiny server for the write token — that's the companion server, not a browser-held token.</p>
           </details>
           <details>
             <summary>Is this production-ready?</summary>

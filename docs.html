@@ -70,8 +70,9 @@
           <p class="kicker">Documentation</p>
           <h1>Drop a Git-as-CMS into your codebase.</h1>
           <p class="lede">
-            CMSBar copies into your React repo (shadcn-style) — Next.js, React
-            Router 7, TanStack Start, a Vite SPA, or Astro. Editors change
+            CMSBar copies into your repo (shadcn-style) — five React hosts
+            (Next.js, React Router 7, TanStack Start, a Vite SPA, Astro) plus
+            native SvelteKit and Nuxt UIs on the same protocol. Editors change
             content on the live site; each save is a branch and a pull request.
             No database, no hosted dashboard required, no lock-in.
           </p>
@@ -80,9 +81,10 @@
         <section id="what">
           <h2>What CMSBar is</h2>
           <p>
-            A small set of React components and API routes you install into a
-            React project — Next.js, React Router 7, TanStack Start, a Vite SPA,
-            or Astro (see <a class="inline-link" href="#frameworks">Frameworks</a>).
+            A small set of components and API routes you install into your
+            project — five React hosts (Next.js, React Router 7, TanStack Start,
+            a Vite SPA, Astro) plus native SvelteKit (Svelte 5) and Nuxt (Vue 3)
+            UIs (see <a class="inline-link" href="#frameworks">Frameworks</a>).
             You wrap editable content with primitives like
             <code>&lt;T path="…"/&gt;</code>; logged-in editors click and edit
             them in place. On Save, all changes commit as one commit on a
@@ -99,11 +101,11 @@
           <h2>Install</h2>
           <p>The CLI has two modes. Start a fresh site on any supported host:</p>
           <pre><code><span class="c"># scaffold a host starter + assemble the neutral CMSBar core into it</span>
-npx cmsbar new <span class="s">my-site</span> --framework <span class="s">next</span>   <span class="c"># next | react-router | tanstack-start | vite | astro</span></code></pre>
+npx cmsbar new <span class="s">my-site</span> --framework <span class="s">next</span>   <span class="c"># next | react-router | tanstack-start | vite | astro | sveltekit | nuxt</span></code></pre>
           <p>Or add CMSBar to an existing project (defaults to Next):</p>
           <pre><code><span class="c"># copies components/cmsbar, lib/cmsbar, a config, a theme (+ Next route handlers)</span>
 npx cmsbar init --namespace <span class="s">mysite</span>
-npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
+npm i bcryptjs clsx tailwind-merge lucide-react   <span class="c"># React hosts; SvelteKit/Nuxt only need bcryptjs</span></code></pre>
           <p class="dim">
             For Next, <code>init</code> is a full copy-in (route handlers, login
             page) and detects <code>src/</code> vs root layout. For the other
@@ -115,30 +117,36 @@ npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
             <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">github.com/cmsbar/cmsbar</a>.
           </p>
           <div class="callout">
-            <b>Host prerequisite:</b> Tailwind v4 (the editor chrome is styled
-            with v4 utilities + <code>styles/cmsbar.css</code> variables) and a
-            GitHub repo + fine-scoped PAT. See <a class="inline-link" href="#frameworks">Frameworks</a> for what each host needs.
+            <b>Host prerequisite:</b> for the React hosts, Tailwind v4 (the editor
+            chrome is styled with v4 utilities + <code>styles/cmsbar.css</code>
+            variables); the SvelteKit / Nuxt native UIs ship plain CSS and need
+            no Tailwind. Either way: a GitHub repo + fine-scoped PAT. See
+            <a class="inline-link" href="#frameworks">Frameworks</a> for what each host needs.
           </div>
         </section>
 
         <section id="frameworks">
           <h2>Frameworks</h2>
           <p>
-            CMSBar is a framework-neutral React core (~64% of the code, shared
+            CMSBar is a framework-neutral core (~64% of the code, shared
             untouched) plus a thin per-host seam: one client host
             (<code>usePathname</code>, <code>navigate</code>, <code>Image</code>,
             <code>apiBase</code> — with DOM defaults) and one server mount. The
             entire API is a single dispatcher — <code>handleCmsRequest</code> for
             framework route handlers, <code>createCmsApi()</code> for a
             fetch-style mount — wired as one catch-all route. The seam is frozen
-            and validated across all five hosts; a 152-test handler-level harness
-            backs it.
+            and validated across all five React hosts; a 156-test handler-level
+            harness backs it.
           </p>
           <p>
             Five React-family hosts ship today, each with a live example that
             builds and runs in
             <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples" target="_blank" rel="noopener">examples/</a>.
-            Scaffold any of them with <code>npx cmsbar new &lt;dir&gt; --framework &lt;fw&gt;</code>.
+            Beyond React, <b>SvelteKit (Svelte 5) and Nuxt (Vue 3) ship as native
+            UIs</b> on the same protocol — the neutral core + handlers stay, the
+            component layer is rebuilt natively, at full feature parity and
+            browser-verified. All seven scaffold with
+            <code>npx cmsbar new &lt;dir&gt; --framework &lt;fw&gt;</code>.
           </p>
 
           <table class="api">
@@ -149,7 +157,8 @@ npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
             <tr><td>Vite + React SPA</td><td>shipped</td><td>DOM-default client + Hono companion (<code>createCmsApi</code>); boot-time session.</td></tr>
             <tr><td>Astro (React islands)</td><td>shipped</td><td>One endpoint → <code>createCmsApi</code>; editor-gated island hydration.</td></tr>
             <tr><td>Next.js Pages Router</td><td>community</td><td>A small <code>(req,res)</code> shim over the neutral handlers — seam published.</td></tr>
-            <tr><td>SvelteKit / Nuxt</td><td>roadmap</td><td>A “CMSBar protocol” UI rewrite (core/handlers stay, components rebuilt). Not shipped.</td></tr>
+            <tr><td>SvelteKit (Svelte 5)</td><td>shipped</td><td>Native Svelte 5 UI over the shared core + handlers. One catch-all <code>+server.ts</code> → <code>createCmsApi</code>; SSR.</td></tr>
+            <tr><td>Nuxt (Vue 3)</td><td>shipped</td><td>Native Vue 3 UI, same protocol. One Nitro catch-all route → <code>createCmsApi</code>; SSR.</td></tr>
           </table>
 
           <h3>Next.js (App Router)</h3>
@@ -233,19 +242,59 @@ npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
             happens — is served <b>only to a logged-in editor</b>.
           </div>
 
+          <h3>SvelteKit (native Svelte 5 UI)</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">sveltekit</span></code></pre>
+          <p class="dim">
+            The first non-React client: the framework-neutral core + handlers are
+            reused unchanged, and the whole editing UI (bar, primitives, drawers,
+            tour) is rebuilt natively in <b>Svelte 5</b>. The API mounts as
+            <b>one catch-all endpoint</b> —
+            <code>src/routes/api/cms/[...path]/+server.ts</code> →
+            <code>createCmsApi()</code>; <code>+layout.server.ts</code> seeds the
+            session from the cookie and <code>+layout.svelte</code> provides the
+            store + mounts <code>&lt;CmsBar/&gt;</code>. SSR, so SEO and the teaser
+            gate work. Plain CSS — no Tailwind. Feature parity with the React UI,
+            browser-verified. See
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/sveltekit" target="_blank" rel="noopener">examples/sveltekit</a>.
+          </p>
+
+          <h3>Nuxt (native Vue 3 UI)</h3>
+          <pre><code>npx cmsbar new <span class="s">my-site</span> --framework <span class="s">nuxt</span></code></pre>
+          <p class="dim">
+            The Vue counterpart: same neutral core + handlers, the editing UI
+            rebuilt natively in <b>Vue 3</b> (SFCs). The whole API mounts in
+            <b>one Nitro catch-all route</b> —
+            <code>server/routes/api/cms/[...path].ts</code> →
+            <code>defineEventHandler(e =&gt; cms(toWebRequest(e)))</code> over
+            <code>createCmsApi()</code>; a server-only plugin seeds the session
+            and <code>app.vue</code> provides the store + mounts
+            <code>&lt;CmsBar/&gt;</code>. SSR; plain CSS — no Tailwind. Feature
+            parity, browser-verified. See
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/tree/main/examples/nuxt" target="_blank" rel="noopener">examples/nuxt</a>.
+          </p>
+          <div class="callout">
+            <b>One protocol, three UIs.</b> React was the first editing client,
+            Svelte the second, Vue the third — all over the same dispatcher,
+            session, content model, and GitHub backend. The contract they build
+            against is documented in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a>.
+          </div>
+
           <h3>Add to an existing project</h3>
           <p>
             Already have one of these hosts? <code>npx cmsbar init --framework &lt;fw&gt;</code>
-            drops the neutral core (and, for non-Next hosts, the adapter glue) and
-            prints the wiring: mount one API route → <code>handleCmsRequest</code> /
-            <code>createCmsApi</code>, and wrap your root with the host +
-            <code>&lt;ContentProvider&gt;</code> + <code>&lt;CmsBar/&gt;</code>. Next is a
-            full copy-in and detects your layout automatically.
+            (all seven) drops the neutral core and prints the wiring: mount one
+            API route → <code>handleCmsRequest</code> / <code>createCmsApi</code>,
+            and wrap your root with the host + <code>&lt;ContentProvider&gt;</code> +
+            <code>&lt;CmsBar/&gt;</code>. Next is a full copy-in and detects your
+            layout automatically; the non-Next React hosts also get adapter glue;
+            SvelteKit / Nuxt get their native SFC UI copied in.
           </p>
           <p class="dim">
-            The host-seam audit, the per-framework adapter specs, and the
-            SvelteKit/Nuxt roadmap are documented in
-            <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a>.
+            The host-seam audit and the per-framework adapter specs live in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/FRAMEWORKS.md" target="_blank" rel="noopener">docs/FRAMEWORKS.md</a>;
+            the non-React protocol contract is in
+            <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a>.
           </p>
         </section>
 
@@ -254,9 +303,10 @@ npm i bcryptjs clsx tailwind-merge lucide-react</code></pre>
           <p>
             Wrap your root layout once so every page can resolve content. The
             example below is Next.js; on the other hosts the same provider is
-            wired from the root loader (React Router / TanStack Start) or the
-            island root (Astro / Vite SPA) — see
-            <a class="inline-link" href="#frameworks">Frameworks</a>.
+            wired from the root loader (React Router / TanStack Start), the island
+            root (Astro / Vite SPA), or the native root —
+            <code>+layout.svelte</code> (SvelteKit) / <code>app.vue</code> (Nuxt)
+            — see <a class="inline-link" href="#frameworks">Frameworks</a>.
           </p>
           <p>For Next.js (App Router):</p>
           <pre><code><span class="c">// app/layout.tsx</span>
@@ -474,20 +524,30 @@ GITHUB_BASE_BRANCH=main</code></pre>
           <h2>Cloud Studio (optional)</h2>
           <p>
             Self-host everything for free. <b>Cloud Studio</b> is the hosted
-            control plane for agencies who'd rather not operate it: encrypted
-            PAT custody, client logins via magic links (no GitHub accounts), an
-            approval dashboard across every connected project, and an install
-            wizard that opens a ready-to-merge PR (config, env template,
-            step-by-step guide). It's in development —
-            a demo mode seeded with sample projects already runs — and the OSS
-            core stays fully functional without it. Developed in the open at
+            control plane for agencies who'd rather not operate it themselves —
+            the Phase 9 MVP, in development (v0.2), with the OSS core fully
+            functional without it. What runs today:
+          </p>
+          <ul class="steps">
+            <li><b>Approval dashboard</b> across every connected repo — all open <code>cms/*</code> drafts, who's editing, last activity, and one-click <b>Approve / Unapprove</b> (toggles the approval label the instance honors) and <b>Merge</b> (squash → redeploy).</li>
+            <li><b>Per-project chips</b> — a live <b>install status</b> (installed / install PR open / not installed, detected via the contents API) and the site's <b>publishing mode</b> (parsed from <code>cms.config.ts</code>, no code evaluation).</li>
+            <li><b>Token custody</b> — connect a repo with its fine-grained PAT; it's validated, then stored AES-256-GCM encrypted (<code>CLOUD_SECRET</code>) in SQLite, never exposed to the browser. <span class="dim">(The site still needs its own <code>GITHUB_TOKEN</code> for now — custody doesn't hand tokens to instances yet.)</span></li>
+            <li><b>“Set up CMSBar” wizard</b> (<code>/setup</code>) — guided onboarding for repos that don't run CMSBar yet: pick the repo, enter site basics, choose the publishing mode, get a generated <code>CMS_SESSION_SECRET</code> + <code>.env</code> block, then it pushes a <code>cmsbar/install</code> branch and opens a PR with <code>cms.config.ts</code>, <code>.env.example</code>, and <code>INSTALL-CMSBAR.md</code>. The preview pane shows byte-for-byte what gets committed.</li>
+            <li><b>Magic-link sign-in</b> for admins, plus an editor-seat data model so seat counting works from day one.</li>
+            <li><b>Demo mode</b> — <code>npm run seed:demo</code> creates two sample projects (one installed with canned drafts, one to walk the wizard) flagged so no GitHub calls and no real PAT are ever made.</li>
+          </ul>
+          <p class="dim">
+            Deliberately not built yet (no adoption signal): billing / Stripe;
+            editor identity for site visitors (magic-link login for clients on
+            the CMSBar sites themselves); a GitHub App (installation tokens); and
+            preview deploys + media CDN + AI auto-wrap. Developed in the open at
             <a class="inline-link" href="https://github.com/cmsbar/cloud" target="_blank" rel="noopener">github.com/cmsbar/cloud</a>;
             join the waitlist from the
             <a class="inline-link" href="index.html#pricing">pricing section</a>.
           </p>
           <div class="callout">
-            Billed on projects × editor seats. The dashboard is the only part
-            of CMSBar behind a login — the docs and code are open.
+            Billed on projects × editor seats (when billing lands). The dashboard
+            is the only part of CMSBar behind a login — the docs and code are open.
           </div>
         </section>
 
@@ -507,7 +567,7 @@ GITHUB_BASE_BRANCH=main</code></pre>
           </details>
           <details>
             <summary>Which frameworks are supported?</summary>
-            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands, editor-gated hydration). See the <a class="inline-link" href="#frameworks">Frameworks section</a> for per-host quickstarts and caveats, and <a class="inline-link" href="https://github.com/cmsbar/cmsbar" target="_blank" rel="noopener">docs/FRAMEWORKS.md in the repo</a> for the host-seam audit and the SvelteKit/Nuxt roadmap. A pure SPA needs the companion server for the write token — the token never lives in the browser.</p>
+            <p>Five React-family hosts ship today, each with a live example that builds and runs: Next.js (App Router), React Router 7, TanStack Start, a Vite + React SPA (with a small Hono companion server), and Astro (React islands, editor-gated hydration). <b>SvelteKit (Svelte 5) and Nuxt (Vue 3) also ship as native UIs</b> on the same protocol — so seven hosts scaffold with <code>npx cmsbar new --framework &lt;fw&gt;</code>. See the <a class="inline-link" href="#frameworks">Frameworks section</a> for per-host quickstarts and caveats, <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/FRAMEWORKS.md" target="_blank" rel="noopener">docs/FRAMEWORKS.md</a> for the host-seam audit, and <a class="inline-link" href="https://github.com/cmsbar/cmsbar/blob/main/docs/PROTOCOL.md" target="_blank" rel="noopener">docs/PROTOCOL.md</a> for the non-React contract. A pure SPA needs the companion server for the write token — the token never lives in the browser.</p>
           </details>
         </section>
 
